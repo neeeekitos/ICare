@@ -21,9 +21,24 @@ public class Rotation {
 
 
 
-        zenithIni=zenithAppliquer;
-        azimuthIni=azimuthAppliquer;
+        zenithIni=zenithIni+zenithAppliquer;
+        azimuthIni=azimuthIni+azimuthAppliquer;
     }
 
+    public int getAzimuthIni(){
+        return azimuthIni;
+    }
 
+    public int getZenithIniIni(){
+        return zenithIni;
+    }
+
+    public static void main(String[] args) {
+
+        Rotation r = new Rotation(20, 30);
+        r.calcul(50,185);
+        System.out.println("azimuth : "+r.getAzimuthIni()+" ; zenith : "+r.getZenithIniIni());
+        r.calcul(20,-5);
+        System.out.println("azimuth : "+r.getAzimuthIni()+" ; zenith : "+r.getZenithIniIni());
+    }
 }
