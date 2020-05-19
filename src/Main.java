@@ -1,3 +1,4 @@
+import org.lwjgl.glfw.GLFW;
 import sun.awt.WindowIDProvider;
 
 public class Main implements Runnable{
@@ -5,6 +6,7 @@ public class Main implements Runnable{
     public Thread fluxAffichage;
     public static Window window;
     public static final int WIDTH = 1280, HEIGHT = 760;
+
 
     public void start() {
         fluxAffichage = new Thread(this, "affichage");

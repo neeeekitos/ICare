@@ -9,6 +9,9 @@ public class Window {
     private int width, height;
     private String title;
     private long window;
+    public int frames;
+    public static long time;
+    public Input input;
 
     public Window(int width, int height, String title) {
         this.width = width;
@@ -23,10 +26,11 @@ public class Window {
              System.exit(-1);
         }
 
-        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
-        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
-        window = GLFW.glfwCreateWindow(width, height, title, 0, 0);
+        input = new Input();
 
+        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
+//        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
+        window = GLFW.glfwCreateWindow(width, height, title, 0, 0);
         if (window == 0) {
             System.err.println("Erreur: la fenetre ne peut pas etre créée");
             System.exit(-1);
@@ -37,10 +41,19 @@ public class Window {
         // centrer sur l'ecram videoMode
         GLFW.glfwSetWindowPos(window, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
 
+        GLFW.glfwMakeContextCurrent(window);
+
+        GLFW.glfwSetKeyCallback(window, input.getKeyboardCallback());
+        GLFW.glfwSetMouseButtonCallback(window, input.getMouseButtonsCallback());
+        GLFW.glfwSetCursorPosCallback(window, input.getMouseMoveCallback());
+
+
         GLFW.glfwShowWindow(window);
 
-        // set fps
+        // set fps 60 per second
         GLFW.glfwSwapInterval(1);
+
+        time = System.currentTimeMillis();
     }
 
     //retur if it should be closed
@@ -50,6 +63,14 @@ public class Window {
 
     public void update() {
         GLFW.glfwPollEvents();
+        frames++;
+
+        //compteur des frames par seconde
+        if (System.currentTimeMillis() > time + 1000) {
+            GLFW.glfwSetWindowTitle(window, title + " | FPS : "+ frames);
+            time = System.currentTimeMillis();
+            frames = 0;
+        }
     }
 
     public void swapBuffers() {
