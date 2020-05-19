@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import org.lwjgl.*;
 
 public class CommandWindow {
     private JTextField jFieldZenith;
@@ -12,6 +13,7 @@ public class CommandWindow {
     private JLabel jLabelAzimut;
 
     public CommandWindow() {
+
         jLabelEntrer.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
