@@ -45,8 +45,7 @@ public class Input {
     public static boolean isButtonDown(int button) {
         return buttons[button];
     }
-
-
+    
     public void destroy() {
         keyboard.free();
         mouseButtons.free();

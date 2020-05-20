@@ -77,6 +77,13 @@ public class Window {
         GLFW.glfwSwapBuffers(window);
     }
 
+    public void destroy() {
+        input.destroy();
+        GLFW.glfwWindowShouldClose(window);
+        GLFW.glfwDestroyWindow(window);
+        GLFW.glfwTerminate();
+    }
+
     public static void main(String[] args) {
         Window window =  new Window(800, 600, "GLFW fenetre");
         window.create();
