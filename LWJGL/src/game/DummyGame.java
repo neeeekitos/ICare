@@ -59,14 +59,15 @@ public class DummyGame implements IGameLogic {
         Material cubeMaterial = new Material(new Vector4f(0, 1, 0, 1), reflectance);
         cubeMesh.setMaterial(cubeMaterial);
         cubeGameItem = new GameItem(cubeMesh);
-        cubeGameItem.setPosition(0, 0, 0);
+        cubeGameItem.setPosition(0, -1, 0);
+        cubeGameItem.setRotation(90,0,0);
         cubeGameItem.setScale(0.5f);
 
         Mesh quadMesh = OBJLoader.loadMesh("/models/plane.obj");
         Material quadMaterial = new Material(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f), reflectance);
         quadMesh.setMaterial(quadMaterial);
         GameItem quadGameItem = new GameItem(quadMesh);
-        quadGameItem.setPosition(0, -1, 0);
+        quadGameItem.setPosition(0, -1, 1);
         quadGameItem.setScale(2.5f);
 
         scene.setGameItems(new GameItem[]{cubeGameItem, quadGameItem});
@@ -140,12 +141,12 @@ public class DummyGame implements IGameLogic {
             camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
         }
 
-        float rotY = cubeGameItem.getRotation().y;
+        float rotY = cubeGameItem.getRotation().z;
         rotY += 0.5f;
         if ( rotY >= 360 ) {
             rotY -= 360;
         }
-        cubeGameItem.getRotation().y = rotY;
+        cubeGameItem.getRotation().z = rotY;
         
         lightAngle += angleInc;
         if ( lightAngle < 0 ) {
