@@ -1,10 +1,13 @@
-import org.joml.Vector3f;
+package engine.graph;
+
 import org.lwjgl.system.MemoryUtil;
+import engine.items.GameItem;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -13,6 +16,7 @@ import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
@@ -30,17 +34,13 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class Mesh {
 
-    private static final Vector3f DEFAULT_COLOUR = new Vector3f(1.0f, 1.0f, 1.0f);
-
     private final int vaoId;
 
     private final List<Integer> vboIdList;
 
     private final int vertexCount;
 
-    private Texture texture;
-
-    private Vector3f colour;
+    private Material material;
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         FloatBuffer posBuffer = null;
@@ -48,7 +48,6 @@ public class Mesh {
         FloatBuffer vecNormalsBuffer = null;
         IntBuffer indicesBuffer = null;
         try {
-            colour = Mesh.DEFAULT_COLOUR;
             vertexCount = indices.length;
             vboIdList = new ArrayList<>();
 
@@ -79,7 +78,12 @@ public class Mesh {
             vboId = glGenBuffers();
             vboIdList.add(vboId);
             vecNormalsBuffer = MemoryUtil.memAllocFloat(normals.length);
-            vecNormalsBuffer.put(normals).flip();
+            if (vecNormalsBuffer.capacity() > 0) {
+                vecNormalsBuffer.put(normals).flip();
+            } else {
+                // Create empty structure
+                vecNormalsBuffer = MemoryUtil.memAllocFloat(positions.length);
+            }
             glBindBuffer(GL_ARRAY_BUFFER, vboId);
             glBufferData(GL_ARRAY_BUFFER, vecNormalsBuffer, GL_STATIC_DRAW);
             glEnableVertexAttribArray(2);
@@ -111,24 +115,12 @@ public class Mesh {
         }
     }
 
-    public boolean isTextured() {
-        return this.texture != null;
+    public Material getMaterial() {
+        return material;
     }
 
-    public Texture getTexture() {
-        return this.texture;
-    }
-
-    public void setTexture(Texture texture) {
-        this.texture = texture;
-    }
-
-    public void setColour(Vector3f colour) {
-        this.colour = colour;
-    }
-
-    public Vector3f getColour() {
-        return this.colour;
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 
     public int getVaoId() {
@@ -139,22 +131,52 @@ public class Mesh {
         return vertexCount;
     }
 
-    public void render() {
+    private void initRender() {
+        Texture texture = material.getTexture();
         if (texture != null) {
-            // Activate firs texture bank
+            // Activate first texture bank
             glActiveTexture(GL_TEXTURE0);
             // Bind the texture
             glBindTexture(GL_TEXTURE_2D, texture.getId());
         }
+        Texture normalMap = material.getNormalMap();
+        if (normalMap != null) {
+            // Activate first texture bank
+            glActiveTexture(GL_TEXTURE1);
+            // Bind the texture
+            glBindTexture(GL_TEXTURE_2D, normalMap.getId());
+        }
 
         // Draw the mesh
         glBindVertexArray(getVaoId());
+    }
+
+    private void endRender() {
+        // Restore state
+        glBindVertexArray(0);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public void render() {
+        initRender();
 
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
 
-        // Restore state
-        glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        endRender();
+    }
+
+    public void renderList(List<GameItem> gameItems, Consumer<GameItem> consumer) {
+        initRender();
+
+        for (GameItem gameItem : gameItems) {
+            // Set up data required by GameItem
+            consumer.accept(gameItem);
+            // Render this game item
+            glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+        }
+
+        endRender();
     }
 
     public void cleanUp() {
@@ -167,8 +189,21 @@ public class Mesh {
         }
 
         // Delete the texture
+        Texture texture = material.getTexture();
         if (texture != null) {
             texture.cleanup();
+        }
+
+        // Delete the VAO
+        glBindVertexArray(0);
+        glDeleteVertexArrays(vaoId);
+    }
+
+    public void deleteBuffers() {
+        // Delete the VBOs
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        for (int vboId : vboIdList) {
+            glDeleteBuffers(vboId);
         }
 
         // Delete the VAO

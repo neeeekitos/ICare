@@ -1,3 +1,5 @@
+package engine;
+
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 import static org.lwjgl.glfw.GLFW.*;
