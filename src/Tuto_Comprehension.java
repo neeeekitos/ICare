@@ -1,47 +1,46 @@
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.opengl.GL;
+import org.lwjgl.glfw.GLFW;
+import sun.awt.WindowIDProvider;
 
-public class Tuto_Comprehension {
+public class Tuto_Comprehension implements Runnable{
 
-    public Tuto_Comprehension(){
-        System.out.println("Bonjour");
-        if ( glfwInit() != true ){
-            System.out.println(" Initialisaion raté");
-            System.exit(1);
-        }
+    public Thread fluxAffichage;
+    public static Soleil window;
+    public static final int WIDTH = 1280, HEIGHT = 600;
 
-        long fenetre = glfwCreateWindow(640,480,"Fenetre",0,0);
 
-        glfwShowWindow(fenetre);
-        glfwMakeContextCurrent(fenetre);
-        GL.createCapabilities();
-        //glClearColor();
-
-        while (glfwWindowShouldClose(fenetre) == false){
-            glfwPollEvents();
-            glClear(GL_COLOR_BUFFER_BIT);
-            glBegin(GL_TRIANGLES);
-                glColor4f(1,0,0,0);
-                glVertex2f(-0.5f,0.5f);
-
-                glColor4f(0,1,0,0);
-                glVertex2f(0.5f,0.5f);
-
-                glColor4f(0,0,0,1);
-                glVertex2f(0.5f,-0.5f);
-
-                glColor4f(0,0,1,0);
-                //glVertex2f(-0.5f,-0.5f);
-                glEnd();
-            glfwSwapBuffers(fenetre);
-        }
-
-        glfwTerminate();
+    public void start() {
+        fluxAffichage = new Thread(this, "affichage");
+        fluxAffichage.start();
     }
 
-    public static void main (String [] args ){
-        Tuto_Comprehension fen = new Tuto_Comprehension();
+    public static void init() {
+        System.out.println("Initialisation d'affichage");
+        window = new Soleil(WIDTH, HEIGHT, "ICare");
+        window.setBackgroundColor(1,0,0);
+        window.create();
     }
 
+    public void run() {
+        init();
+        while(!window.shouldClose() ) {
+            update();
+            render();
+        }
+        window.destroy();
+    }
+
+    public void update() {
+        window.update();
+        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) ){
+            System.out.println("X :" + Input.getMouseX() + ", Y :" + Input.getMouseY());
+        }
+    }
+
+    public void render() {
+        window.swapBuffers();
+    }
+
+    public static void main(String[] args) {
+        new Tuto_Comprehension().start();
+    }
 }

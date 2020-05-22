@@ -5,7 +5,7 @@ public class Main implements Runnable{
 
     public Thread fluxAffichage;
     public static Window window;
-    public static final int WIDTH = 1280, HEIGHT = 760;
+    public static final int WIDTH = 1280, HEIGHT = 600;
 
 
     public void start() {
@@ -16,22 +16,24 @@ public class Main implements Runnable{
     public static void init() {
         System.out.println("Initialisation d'affichage");
         window = new Window(WIDTH, HEIGHT, "ICare");
+        window.setBackgroundColor(1,0,0);
         window.create();
     }
 
     public void run() {
         init();
-        while(!window.shouldClose()) {
+        while(!window.shouldClose() ) {
             update();
             render();
-            if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) return;
         }
         window.destroy();
     }
 
     public void update() {
         window.update();
-        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("X :" + Input.getMouseX() + ", Y :" + Input.getMouseY());
+        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) ){
+            System.out.println("X :" + Input.getMouseX() + ", Y :" + Input.getMouseY());
+        }
     }
 
     public void render() {

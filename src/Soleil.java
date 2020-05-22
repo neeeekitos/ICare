@@ -1,120 +1,50 @@
-import org.lwjgl.Version;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.system.MemoryStack;
+import org.lwjgl.opengl.GL11;
 
-import java.nio.IntBuffer;
+import java.nio.FloatBuffer;
 
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static java.sql.Types.NULL;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Soleil {
+public class Soleil extends Window {
+
+    private int width, height;
+    private String title;
     private long window;
+    public int frames;
+    public static long time;
+    public Input input;
+    private float backgroundR, backgroundG, backgroundB ;
+    private boolean isResized;
+    private boolean isFullScreen ;
+    private GLFWWindowSizeCallback sizeCallback;
 
-    public void run() {
-        System.out.println("Hello LWJGL " + Version.getVersion() + "!");
+    private static final float FOV = (float) Math.toRadians(60.0f);
+    private static final float Z_NEAR = 0.01f;
+    private static final float Z_FAR = 1000.f;
+    private org.lwjgl.opengl.ARBMatrixPalette projectionMatrix;
 
-        init();
-        loop();
-
-        // Free the window callbacks and destroy the window
-        glfwFreeCallbacks(window);
-        glfwDestroyWindow(window);
-
-        // Terminate GLFW and free the error callback
-        glfwTerminate();
-        glfwSetErrorCallback(null).free();
+    public Soleil (int width, int height, String title) {
+        super(width,height,title);
     }
 
-    private void init() {
-        GLFWErrorCallback.createPrint(System.err).set();
-        System.out.println("init");
-        // Initialize GLFW. Most GLFW functions will not work before doing this.
-        if ( !glfwInit() )
-            throw new IllegalStateException("Unable to initialize GLFW");
+    public void update (){
+        super.update();
+        GL11.glBegin(GL_QUADS);
+        GL11.glColor4f(0,1,0,0);
+        GL11.glVertex3d(0.5f,0.5f,0);
+        GL11.glVertex3d(-0.5f,0.5f,0);
+        GL11.glVertex3d(-0.5f,-0.5f,0);
+        GL11.glColor4f(0,0,1,0);
+        GL11.glVertex3d(0.5f,-0.5f,0);
+        float aspectRatio = (float) this.getWidth() / this.getHeight();
+        //projectionMatrix = new org.lwjgl.opengl.ARBMatrixPalette().setPerspective(FOV, aspectRatio,
+               // Z_NEAR, Z_FAR);
+        GL11.glEnd();
 
-        glfwDefaultWindowHints(); // optional, the current window hints are already the default
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
-
-        // Create the window
-        window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
-        if ( window == NULL )
-            throw new RuntimeException("Failed to create the GLFW window");
-
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-        });
-
-        // Get the thread stack and push a new frame
-        try ( MemoryStack stack = stackPush() ) {
-            IntBuffer pWidth = stack.mallocInt(1); // int*
-            IntBuffer pHeight = stack.mallocInt(1); // int*
-
-            // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(window, pWidth, pHeight);
-
-            // Get the resolution of the primary monitor
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-            // Center the window
-            glfwSetWindowPos(
-                    window,
-                    (vidmode.width() - pWidth.get(0)) / 2,
-                    (vidmode.height() - pHeight.get(0)) / 2
-            );
-        } // the stack frame is popped automatically
-
-        // Make the OpenGL context current
-        glfwMakeContextCurrent(window);
-        // Enable v-sync
-        glfwSwapInterval(1);
-
-        // Make the window visible
-        glfwShowWindow(window);
-    }
-
-    private void loop() {
-        GL.createCapabilities();
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-        System.out.println("loop start");
-        while ( !glfwWindowShouldClose(window) ) {
-            System.out.println("dans le loop");
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-            glBegin(GL_TRIANGLES);
-            glColor4f(1,0,0,0);
-            glVertex2f(-0.5f,0.5f);
-
-            glColor4f(0,1,0,0);
-            glVertex2f(0.5f,0.5f);
-
-            glColor4f(0,0,0,1);
-            glVertex2f(0.5f,-0.5f);
-
-            glEnd();
-            glfwSwapBuffers(window); // swap the color buffers
-
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
-            glfwPollEvents();
-
-        }
-    }
-
-    public static void main(String[] args) {
-        Soleil Sun = new Soleil();
-        Sun.run();
 
     }
+
 }
