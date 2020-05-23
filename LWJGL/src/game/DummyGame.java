@@ -1,6 +1,8 @@
 package game;
 
 import engine.*;
+import engine.graph.lights.PointLight;
+import engine.graph.lights.SpotLight;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -34,17 +36,18 @@ public class DummyGame implements IGameLogic {
     private Terrain terrain;
 
     private GameItem cubeGameItem;
+
+    private GameItem SoleilGameItem;
     
-    private float angleInc;
-            
-    private float lightAngle;
+    private float azimutSoleil;
+
+    private float zenithSoleil;
 
     public DummyGame() {
         renderer = new Renderer();
         camera = new Camera();
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
-        angleInc = 0;
-        lightAngle = 45;
+        zenithSoleil = 90;
     }
 
     @Override
@@ -63,37 +66,60 @@ public class DummyGame implements IGameLogic {
         cubeGameItem.setRotation(90,0,0);
         cubeGameItem.setScale(0.5f);
 
+        //Soleil
+        float reflectanceSoleil = 1f;
+        Mesh SoleilMesh = OBJLoader.loadMesh("/models/soleil.obj");
+        Material SoleilMaterial = new Material(new Vector4f(0, 1, 0, 1), reflectanceSoleil);
+        SoleilMesh.setMaterial(SoleilMaterial);
+        SoleilGameItem = new GameItem(SoleilMesh);
+        SoleilGameItem.setPosition(0, 0f, 0);
+        SoleilGameItem.setRotation(90,0,0);
+        SoleilGameItem.setScale(0.5f);
+
         Mesh quadMesh = OBJLoader.loadMesh("/models/plane.obj");
         Material quadMaterial = new Material(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f), reflectance);
         quadMesh.setMaterial(quadMaterial);
         GameItem quadGameItem = new GameItem(quadMesh);
         quadGameItem.setPosition(0, -1, 1);
-        quadGameItem.setScale(2.5f);
+        quadGameItem.setScale(4f);
 
-        scene.setGameItems(new GameItem[]{cubeGameItem, quadGameItem});
+        scene.setGameItems(new GameItem[]{cubeGameItem,SoleilGameItem, quadGameItem});
 
         // Setup Lights
         setupLights();
 
-        camera.getPosition().z = 2;
+        camera.getPosition().z = 5;
+        camera.getPosition().y = 2f;
+        camera.getRotation().x = 30;
         hud = new Hud("Light Angle:");
     }
 
     private void setupLights() {
         SceneLight sceneLight = new SceneLight();
         scene.setSceneLight(sceneLight);
-
         // Ambient Light
-        sceneLight.setAmbientLight(new Vector3f(0.3f, 0.3f, 0.3f));
-        sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
+        sceneLight.setAmbientLight(new Vector3f(0.0f, 0.0f, 0.0f));
+        //sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1f, 1f));
 
         // Directional Light
-        float lightIntensity = 1.0f;
-        Vector3f lightDirection = new Vector3f(0, 1, 1);
+        float lightIntensity = 1f;
+        Vector3f lightDirection = new Vector3f(0, 0, 0.0f);
         DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
         directionalLight.setShadowPosMult(5);
         directionalLight.setOrthoCords(-10.0f, 10.0f, -10.0f, 10.0f, -1.0f, 20.0f);
-        sceneLight.setDirectionalLight(directionalLight);     
+        sceneLight.setDirectionalLight(directionalLight);
+
+        // Point Light Représente le soleil
+        PointLight [] source = new PointLight[2];
+        float Point_lightIntensity = 0.8f;
+        Vector3f PointlightDirection_0 = new Vector3f(0, 0, -0.5f); // Soleil principal
+        PointLight.Attenuation AttenuationSoleil = new PointLight.Attenuation(0,0,0.7f);
+        source [0] = new PointLight(new Vector3f(1,1,1),PointlightDirection_0,Point_lightIntensity);
+        source [0].setAttenuation(AttenuationSoleil);
+        Vector3f PointlightDirection_1 = new Vector3f(0, -0.2f, 0.5f); // Soleil' éclaire la surface par en dessous sinon ombre
+        source [1] = new PointLight(new Vector3f(1,1,1),PointlightDirection_1,0.6f);
+        sceneLight.setPointLightList(source);
+
     }
 
     @Override
@@ -114,12 +140,19 @@ public class DummyGame implements IGameLogic {
         } else if (window.isKeyPressed(GLFW_KEY_X)) {
             cameraInc.y = 1;
         }
+        if (window.isKeyPressed(GLFW_KEY_UP)) {
+            zenithSoleil += 1;
+            ZenithSoleil(zenithSoleil);
+        } else if (window.isKeyPressed(GLFW_KEY_DOWN)) {
+            zenithSoleil -= 1;
+            ZenithSoleil(zenithSoleil);
+        }
         if (window.isKeyPressed(GLFW_KEY_LEFT)) {
-            angleInc -= 0.05f;
+            azimutSoleil -= 0.05f;
         } else if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
-            angleInc += 0.05f;
+            azimutSoleil += 0.05f;
         } else {
-            angleInc = 0;
+            azimutSoleil = 0;
         }
     }
 
@@ -147,22 +180,30 @@ public class DummyGame implements IGameLogic {
             rotY -= 360;
         }
         cubeGameItem.getRotation().z = rotY;
-        
-        lightAngle += angleInc;
-        if ( lightAngle < 0 ) {
-            lightAngle = 0;
-        } else if (lightAngle > 180 ) {
-            lightAngle = 180;
-        }
-        float zValue = (float)Math.cos(Math.toRadians(lightAngle));
-        float yValue = (float)Math.sin(Math.toRadians(lightAngle));
+
         Vector3f lightDirection = this.scene.getSceneLight().getDirectionalLight().getDirection();
-        lightDirection.x = 0;
-        lightDirection.y = yValue;
-        lightDirection.z = zValue;
+        Vector3f PointlightDirection = this.scene.getSceneLight().getPointLightList(0).getPosition();
+        if ( SoleilGameItem.getPosition().y +1<-0.1){                             // Le soleil est couché
+            this.scene.getSceneLight().getPointLightList(0).setIntensity(0);
+            this.scene.getSceneLight().getPointLightList(1).setIntensity(0.2f); // on garde une petite luminosité
+            lightDirection.x = 0;
+            lightDirection.y = 0;
+            lightDirection.z = 0;
+        } else {
+            this.scene.getSceneLight().getPointLightList(0).setIntensity((SoleilGameItem.getPosition().y +1)*0.25f+0.75f); // l'intensité du soleil oscille entre 1 et 0.75
+            this.scene.getSceneLight().getPointLightList(1).setIntensity((SoleilGameItem.getPosition().y +1)*0.4f+0.2f);   // l'intensité du soleil' oscille entre 0.6 et 0.2
+            lightDirection.x = SoleilGameItem.getPosition().x;
+            lightDirection.y = SoleilGameItem.getPosition().y +1;
+            lightDirection.z = 0.5f;
+            PointlightDirection.x = SoleilGameItem.getPosition().x;
+            PointlightDirection.y = SoleilGameItem.getPosition().y +1;
+            PointlightDirection.z = 0f;
+        }
+        this.scene.getSceneLight().getPointLightList(0).getAttenuation().setExponent(Math.abs(0.7f*(SoleilGameItem.getPosition().x)));
+        this.scene.getSceneLight().getDirectionalLight().setIntensity(SoleilGameItem.getPosition().y +1);
+        PointlightDirection.normalize();
         lightDirection.normalize();
-        float lightAngle = (float)Math.toDegrees(Math.acos(lightDirection.z));
-        hud.setStatusText("LightAngle: " + lightAngle);        
+
     }
 
     @Override
@@ -180,5 +221,13 @@ public class DummyGame implements IGameLogic {
         if (hud != null) {
             hud.cleanup();
         }
+    }
+
+    public void ZenithSoleil( float angle ){
+        float rad = (float) ( angle*Math.PI/180);
+        float nouvX = (float)( Math.cos(2*rad+Math.PI/2)) ;
+        float nouvY = (float)( Math.sin(2*rad+3*Math.PI/2)-1) ;
+        SoleilGameItem.getPosition().x = nouvX;
+        SoleilGameItem.getPosition().y = nouvY;
     }
 }
