@@ -32,6 +32,8 @@ public class SceneLight {
         return pointLightList;
     }
 
+    public PointLight getPointLightList(int i ) { return pointLightList[i]; }
+
     public void setPointLightList(PointLight[] pointLightList) {
         this.pointLightList = pointLightList;
     }
