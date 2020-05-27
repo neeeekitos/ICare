@@ -41,8 +41,6 @@ public class DummyGame implements IGameLogic {
 
     private GameItem basAcierItem;
 
-    private GameItem basBouleItem;
-
     private GameItem basPignonItem;
 
     private GameItem axeAcierItem;
@@ -60,6 +58,8 @@ public class DummyGame implements IGameLogic {
     private GameItem hautPmmaItem;
 
     private GameItem hautPanneauItem;
+
+    private GameItem basBouleItem;
 
     private float azimutSoleil;
 
@@ -123,7 +123,7 @@ public class DummyGame implements IGameLogic {
         basAcierItem.setScale(0.5f);
 
         Mesh asmBasPignon = OBJLoader.loadMesh("/models/Asm_bas_Pignon.obj");
-        Material asmBasPignonMaterial = new Material(new Vector4f(0, 0, 1, 1), reflectance);
+        Material asmBasPignonMaterial = new Material(new Vector4f(0.7f, 0, 0.12f, 1), reflectance);
         asmBasPignon.setMaterial(asmBasPignonMaterial);
         basPignonItem = new GameItem(asmBasPignon);
         basPignonItem.setPosition(0, -1, 0);
@@ -150,12 +150,20 @@ public class DummyGame implements IGameLogic {
         axeMdfItem.setScale(0.5f);
 
         Mesh asmAxePLastique = OBJLoader.loadMesh("/models/Asm_Axe_plastique.obj");
-        Material asmAxePlastiqueMaterial = new Material(new Vector4f((float) 0.1, (float) 0.1, 1, 1), reflectance);
+        Material asmAxePlastiqueMaterial = new Material(new Vector4f(0.7f, 0, 0.12f, 1), reflectance);
         asmAxePLastique.setMaterial(asmAxePlastiqueMaterial);
         axePlastiqueItem = new GameItem(asmAxePLastique);
         axePlastiqueItem.setPosition(0, (float) -0.992, 0);
         axePlastiqueItem.setRotation(90,0,0);
         axePlastiqueItem.setScale(0.5f);
+
+        Mesh asmBasBoule = OBJLoader.loadMesh("/models/Asm_bas_Boule.obj");
+        Material asmBasBouleMaterial = new Material(new Vector4f(1f, 1f, 1f, 0.195f), reflectance);
+        asmBasBoule.setMaterial(asmBasBouleMaterial);
+        basBouleItem = new GameItem(asmBasBoule);
+        basBouleItem.setPosition(0, -1, 0);
+        basBouleItem.setRotation(90,0,0);
+        basBouleItem.setScale(0.5f);
 
         //assemblage haut
         Mesh asmHautMdf = OBJLoader.loadMesh("/models/Asm_Haut_Bois.obj");
@@ -163,7 +171,7 @@ public class DummyGame implements IGameLogic {
         asmHautMdfMaterial.setTexture(textureMDF);
         asmHautMdf.setMaterial(asmHautMdfMaterial);
         hautMdfItem = new GameItem(asmHautMdf);
-        hautMdfItem.setPosition(0, (float) -0.86, 0);
+        hautMdfItem.setPosition(0, (float) -0.856, 0);
         hautMdfItem.setRotation(90,0,0);
         hautMdfItem.setScale(0.5f);
 
@@ -172,45 +180,36 @@ public class DummyGame implements IGameLogic {
         asmAcierMdfMaterial.setTexture(textureAcier);
         asmHautAcier.setMaterial(asmAcierMdfMaterial);
         hautAcierItem = new GameItem(asmHautAcier);
-        hautAcierItem.setPosition(0, (float) -0.86, 0);
+        hautAcierItem.setPosition(0, (float) -0.856, 0);
         hautAcierItem.setRotation(90,0,0);
         hautAcierItem.setScale(0.5f);
 
         Mesh asmHautPlastique = OBJLoader.loadMesh("/models/Asm_Haut_plastique.obj");
-        Material asmHautPlastiqueMaterial = new Material(new Vector4f((float) 0.1, (float) 0.1, 1,  1), reflectance);
+        Material asmHautPlastiqueMaterial = new Material(new Vector4f(0.7f, 0, 0.12f, 1), reflectance);
         //asmHautPlastiqueMaterial.setTexture(textureMDF);
         asmHautPlastique.setMaterial(asmHautPlastiqueMaterial);
         hautPlastiqueItem = new GameItem(asmHautPlastique);
-        hautPlastiqueItem.setPosition(0, (float) -0.86, 0);
+        hautPlastiqueItem.setPosition(0, (float) -0.856, 0);
         hautPlastiqueItem.setRotation(90,0,0);
         hautPlastiqueItem.setScale(0.5f);
 
         Mesh asmHautPmma = OBJLoader.loadMesh("/models/Asm_Haut_pmma.obj");
-        Material asmHautPmmaMaterial = new Material(new Vector4f(1, 1, 0, (float) 0.6), reflectance);
+        Material asmHautPmmaMaterial = new Material(new Vector4f(1, 1, 0, (float) 0.4), reflectance);
         //asmHautPmmaMaterial.setTexture(textureMDF);
         asmHautPmma.setMaterial(asmHautPmmaMaterial);
         hautPmmaItem = new GameItem(asmHautPmma);
-        hautPmmaItem.setPosition(0, (float) -0.86, 0);
+        hautPmmaItem.setPosition(0, (float) -0.856, 0);
         hautPmmaItem.setRotation(90,0,0);
         hautPmmaItem.setScale(0.5f);
 
         Mesh asmHautPanneau = OBJLoader.loadMesh("/models/Asm_Haut_panneau.obj");
-        Material asmHautPanneauMaterial = new Material(new Vector4f(1, 1, 1, (float) 0.2), reflectance);
+        Material asmHautPanneauMaterial = new Material(new Vector4f(1, 1, 1,1), 1f);
         asmHautPanneauMaterial.setTexture(textureAcier);
         asmHautPanneau.setMaterial(asmHautPanneauMaterial);
         hautPanneauItem = new GameItem(asmHautPanneau);
-        hautPanneauItem.setPosition(0, (float) -0.86, 0);
+        hautPanneauItem.setPosition(0, (float) -0.856, 0);
         hautPanneauItem.setRotation(90,0,0);
         hautPanneauItem.setScale(0.5f);
-
-        // boule
-        Mesh asmBasBoule = OBJLoader.loadMesh("/models/Asm_bas_Boule.obj");
-        Material asmBasBouleMaterial = new Material(new Vector4f(1, 1, 1, (float) 0.3), reflectance);
-        asmBasBoule.setMaterial(asmBasBouleMaterial);
-        basBouleItem = new GameItem(asmBasBoule);
-        basBouleItem.setPosition(0, -1, 0);
-        basBouleItem.setRotation(90,0,0);
-        basBouleItem.setScale(0.5f);
         
         //Soleil
         float reflectanceSoleil = 1f;
@@ -229,8 +228,8 @@ public class DummyGame implements IGameLogic {
         quadGameItem.setPosition(0, -1, 1);
         quadGameItem.setScale(2.5f);
 
-        scene.setGameItems(new GameItem[]{basPignonItem,basMdfItem,basAcierItem,SoleilGameItem, axePlastiqueItem,
-                axeMdfItem, axeAcierItem, hautMdfItem, hautAcierItem, hautPanneauItem, hautPlastiqueItem, hautPmmaItem, basBouleItem,quadGameItem});
+        scene.setGameItems(new GameItem[]{ basPignonItem,basMdfItem,basAcierItem,SoleilGameItem, axePlastiqueItem,
+                axeMdfItem, basBouleItem, axeAcierItem, hautMdfItem, hautAcierItem, hautPanneauItem, hautPlastiqueItem, hautPmmaItem, quadGameItem});
 
         // Setup Lights
         setupLights();
