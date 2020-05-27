@@ -1,6 +1,7 @@
 package game;
 
 import engine.*;
+import engine.graph.*;
 import engine.graph.lights.PointLight;
 import engine.graph.lights.SpotLight;
 import org.joml.Vector2f;
@@ -8,14 +9,13 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import static org.lwjgl.glfw.GLFW.*;
 
-import engine.graph.Camera;
-import engine.graph.Material;
-import engine.graph.Mesh;
-import engine.graph.OBJLoader;
-import engine.graph.Renderer;
 import engine.graph.lights.DirectionalLight;
 import engine.items.GameItem;
 import engine.items.Terrain;
+
+import java.io.File;
+import java.net.URL;
+import java.nio.file.Paths;
 
 public class DummyGame implements IGameLogic {
 
@@ -35,10 +35,32 @@ public class DummyGame implements IGameLogic {
 
     private Terrain terrain;
 
-    private GameItem cubeGameItem;
-
     private GameItem SoleilGameItem;
-    
+
+    private GameItem basMdfItem;
+
+    private GameItem basAcierItem;
+
+    private GameItem basBouleItem;
+
+    private GameItem basPignonItem;
+
+    private GameItem axeAcierItem;
+
+    private GameItem axeMdfItem;
+
+    private GameItem axePlastiqueItem;
+
+    private GameItem hautMdfItem;
+
+    private GameItem hautAcierItem;
+
+    private GameItem hautPlastiqueItem;
+
+    private GameItem hautPmmaItem;
+
+    private GameItem hautPanneauItem;
+
     private float azimutSoleil;
 
     private float zenithSoleil;             //Correspond à un l'angle entre l'axe x et y est compris entre 0 et 360°
@@ -61,15 +83,135 @@ public class DummyGame implements IGameLogic {
         scene = new Scene();
 
         // Setup  GameItems
-        float reflectance = 1f;
-        Mesh cubeMesh = OBJLoader.loadMesh("/models/assemblage.obj");
-        Material cubeMaterial = new Material(new Vector4f(0, 1, 0, 1), reflectance);
-        cubeMesh.setMaterial(cubeMaterial);
-        cubeGameItem = new GameItem(cubeMesh);
-        cubeGameItem.setPosition(0, -1, 0);
-        cubeGameItem.setRotation(90,0,0);
-        cubeGameItem.setScale(0.5f);
+        URL res1 = getClass().getClassLoader().getResource("textures/marron_clair.png");
+        File file1 = Paths.get(res1.toURI()).toFile();
+        String absolutePath1 = file1.getAbsolutePath();
+        Texture textureMDF = new Texture(absolutePath1);
+        //cubeMaterial.setTexture(texture);
 
+        URL res2 = getClass().getClassLoader().getResource("textures/acier.png");
+        File file2 = Paths.get(res2.toURI()).toFile();
+        String absolutePath2 = file2.getAbsolutePath();
+        Texture textureAcier = new Texture(absolutePath2);
+        //cubeMaterial.setTexture(texture);
+
+        URL res3 = getClass().getClassLoader().getResource("textures/blanc.png");
+        File file3 = Paths.get(res3.toURI()).toFile();
+        String absolutePath3 = file3.getAbsolutePath();
+        Texture textureBlanc = new Texture(absolutePath3);
+        //cubeMaterial.setTexture(texture);
+
+        float reflectance = 1f;
+
+        //Assemblage bas
+        Mesh asmBasMdf = OBJLoader.loadMesh("/models/Asm_bas_MDF.obj");
+        Material asmBasMdfMaterial = new Material(new Vector4f(0, 1, 0, 1), reflectance);
+        asmBasMdfMaterial.setTexture(textureMDF);
+        asmBasMdf.setMaterial(asmBasMdfMaterial);
+        basMdfItem = new GameItem(asmBasMdf);
+        basMdfItem.setPosition(0, -1, 0);
+        basMdfItem.setRotation(90,0,0);
+        basMdfItem.setScale(0.5f);
+
+        Mesh asmBasAcier = OBJLoader.loadMesh("/models/Asm_bas_Metal.obj");
+        Material asmBasAcierMaterial = new Material(new Vector4f(0, 1, 0, 1), reflectance);
+        asmBasAcierMaterial.setTexture(textureAcier);
+        asmBasAcier.setMaterial(asmBasAcierMaterial);
+        basAcierItem = new GameItem(asmBasAcier);
+        basAcierItem.setPosition(0, -1, 0);
+        basAcierItem.setRotation(90,0,0);
+        basAcierItem.setScale(0.5f);
+
+        Mesh asmBasPignon = OBJLoader.loadMesh("/models/Asm_bas_Pignon.obj");
+        Material asmBasPignonMaterial = new Material(new Vector4f(0, 0, 1, 1), reflectance);
+        asmBasPignon.setMaterial(asmBasPignonMaterial);
+        basPignonItem = new GameItem(asmBasPignon);
+        basPignonItem.setPosition(0, -1, 0);
+        basPignonItem.setRotation(90,0,0);
+        basPignonItem.setScale(0.5f);
+
+        //Assemblage axe
+        Mesh asmAxeAcier = OBJLoader.loadMesh("/models/Asm_Axe_acier.obj");
+        Material asmAxeAcierMaterial = new Material(new Vector4f(0, 1, 0, 1), reflectance);
+        asmAxeAcierMaterial.setTexture(textureAcier);
+        asmAxeAcier.setMaterial(asmAxeAcierMaterial);
+        axeAcierItem = new GameItem(asmAxeAcier);
+        axeAcierItem.setPosition(0, (float) -0.992, 0);
+        axeAcierItem.setRotation(90,0,0);
+        axeAcierItem.setScale(0.5f);
+
+        Mesh asmAxeMdf = OBJLoader.loadMesh("/models/Asm_Axe_MDF.obj");
+        Material asmAxeMdfMaterial = new Material(new Vector4f(0, 1, 0, 1), reflectance);
+        asmAxeMdfMaterial.setTexture(textureMDF);
+        asmAxeMdf.setMaterial(asmAxeMdfMaterial);
+        axeMdfItem = new GameItem(asmAxeMdf);
+        axeMdfItem.setPosition(0, (float) -0.992, 0);
+        axeMdfItem.setRotation(90,0,0);
+        axeMdfItem.setScale(0.5f);
+
+        Mesh asmAxePLastique = OBJLoader.loadMesh("/models/Asm_Axe_plastique.obj");
+        Material asmAxePlastiqueMaterial = new Material(new Vector4f((float) 0.1, (float) 0.1, 1, 1), reflectance);
+        asmAxePLastique.setMaterial(asmAxePlastiqueMaterial);
+        axePlastiqueItem = new GameItem(asmAxePLastique);
+        axePlastiqueItem.setPosition(0, (float) -0.992, 0);
+        axePlastiqueItem.setRotation(90,0,0);
+        axePlastiqueItem.setScale(0.5f);
+
+        //assemblage haut
+        Mesh asmHautMdf = OBJLoader.loadMesh("/models/Asm_Haut_Bois.obj");
+        Material asmHautMdfMaterial = new Material(new Vector4f(1, 1, 1, (float) 0.2), reflectance);
+        asmHautMdfMaterial.setTexture(textureMDF);
+        asmHautMdf.setMaterial(asmHautMdfMaterial);
+        hautMdfItem = new GameItem(asmHautMdf);
+        hautMdfItem.setPosition(0, (float) -0.86, 0);
+        hautMdfItem.setRotation(90,0,0);
+        hautMdfItem.setScale(0.5f);
+
+        Mesh asmHautAcier = OBJLoader.loadMesh("/models/Asm_Haut_Metal.obj");
+        Material asmAcierMdfMaterial = new Material(new Vector4f(1, 1, 1, (float) 0.2), reflectance);
+        asmAcierMdfMaterial.setTexture(textureAcier);
+        asmHautAcier.setMaterial(asmAcierMdfMaterial);
+        hautAcierItem = new GameItem(asmHautAcier);
+        hautAcierItem.setPosition(0, (float) -0.86, 0);
+        hautAcierItem.setRotation(90,0,0);
+        hautAcierItem.setScale(0.5f);
+
+        Mesh asmHautPlastique = OBJLoader.loadMesh("/models/Asm_Haut_plastique.obj");
+        Material asmHautPlastiqueMaterial = new Material(new Vector4f((float) 0.1, (float) 0.1, 1,  1), reflectance);
+        //asmHautPlastiqueMaterial.setTexture(textureMDF);
+        asmHautPlastique.setMaterial(asmHautPlastiqueMaterial);
+        hautPlastiqueItem = new GameItem(asmHautPlastique);
+        hautPlastiqueItem.setPosition(0, (float) -0.86, 0);
+        hautPlastiqueItem.setRotation(90,0,0);
+        hautPlastiqueItem.setScale(0.5f);
+
+        Mesh asmHautPmma = OBJLoader.loadMesh("/models/Asm_Haut_pmma.obj");
+        Material asmHautPmmaMaterial = new Material(new Vector4f(1, 1, 0, (float) 0.6), reflectance);
+        //asmHautPmmaMaterial.setTexture(textureMDF);
+        asmHautPmma.setMaterial(asmHautPmmaMaterial);
+        hautPmmaItem = new GameItem(asmHautPmma);
+        hautPmmaItem.setPosition(0, (float) -0.86, 0);
+        hautPmmaItem.setRotation(90,0,0);
+        hautPmmaItem.setScale(0.5f);
+
+        Mesh asmHautPanneau = OBJLoader.loadMesh("/models/Asm_Haut_panneau.obj");
+        Material asmHautPanneauMaterial = new Material(new Vector4f(1, 1, 1, (float) 0.2), reflectance);
+        asmHautPanneauMaterial.setTexture(textureAcier);
+        asmHautPanneau.setMaterial(asmHautPanneauMaterial);
+        hautPanneauItem = new GameItem(asmHautPanneau);
+        hautPanneauItem.setPosition(0, (float) -0.86, 0);
+        hautPanneauItem.setRotation(90,0,0);
+        hautPanneauItem.setScale(0.5f);
+
+        // boule
+        Mesh asmBasBoule = OBJLoader.loadMesh("/models/Asm_bas_Boule.obj");
+        Material asmBasBouleMaterial = new Material(new Vector4f(1, 1, 1, (float) 0.3), reflectance);
+        asmBasBoule.setMaterial(asmBasBouleMaterial);
+        basBouleItem = new GameItem(asmBasBoule);
+        basBouleItem.setPosition(0, -1, 0);
+        basBouleItem.setRotation(90,0,0);
+        basBouleItem.setScale(0.5f);
+        
         //Soleil
         float reflectanceSoleil = 1f;
         Mesh SoleilMesh = OBJLoader.loadMesh("/models/soleil.obj");
@@ -87,7 +229,8 @@ public class DummyGame implements IGameLogic {
         quadGameItem.setPosition(0, -1, 1);
         quadGameItem.setScale(2.5f);
 
-        scene.setGameItems(new GameItem[]{cubeGameItem,SoleilGameItem, quadGameItem});
+        scene.setGameItems(new GameItem[]{basPignonItem,basMdfItem,basAcierItem,SoleilGameItem, axePlastiqueItem,
+                axeMdfItem, axeAcierItem, hautMdfItem, hautAcierItem, hautPanneauItem, hautPlastiqueItem, hautPmmaItem, basBouleItem,quadGameItem});
 
         // Setup Lights
         setupLights();
@@ -178,12 +321,23 @@ public class DummyGame implements IGameLogic {
             camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
         }
 
-        float rotY = cubeGameItem.getRotation().z;
+        float rotY = basMdfItem.getRotation().z;
         rotY += 0.5f;
         if ( rotY >= 360 ) {
             rotY -= 360;
         }
-        cubeGameItem.getRotation().z = rotY;
+        basMdfItem.getRotation().z = rotY;
+        basAcierItem.getRotation().z = rotY;
+        basBouleItem.getRotation().z = rotY;
+        basPignonItem.getRotation().z = rotY;
+        axeAcierItem.getRotation().z = rotY;
+        axeMdfItem.getRotation().z = rotY;
+        axePlastiqueItem.getRotation().z = rotY;
+        hautPlastiqueItem.getRotation().z =rotY;
+        hautPmmaItem.getRotation().z = rotY;
+        hautPanneauItem.getRotation().z = rotY;
+        hautAcierItem.getRotation().z = rotY;
+        hautMdfItem.getRotation().z = rotY;
 
         Vector3f lightDirection = this.scene.getSceneLight().getDirectionalLight().getDirection();
         Vector3f PointlightDirection = this.scene.getSceneLight().getPointLightList(0).getPosition();
