@@ -3,6 +3,10 @@ package game;
 import engine.*;
 import engine.graph.*;
 import engine.graph.lights.PointLight;
+import engine.graph.lights.SpotLight;
+import engine.items.SkyBox;
+import javafx.geometry.Pos;
+
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -23,6 +27,12 @@ import java.nio.file.Paths;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
+
+import java.io.File;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.file.Paths;
+import java.util.Vector;
 
 public class DummyGame implements IGameLogic {
 
@@ -252,20 +262,22 @@ public class DummyGame implements IGameLogic {
         hautPanneauItem.setScale(0.5f);
         
         //Soleil
-        float reflectanceSoleil = 1f;
         Mesh SoleilMesh = OBJLoader.loadMesh("/models/soleil.obj");
-        Material SoleilMaterial = new Material(new Vector4f(0, 1, 0, 1), reflectanceSoleil);
+        Material SoleilMaterial = new Material( chercheTexture("textures/soleil.png"), reflectance );
         SoleilMesh.setMaterial(SoleilMaterial);
-        soleilGameItem = new GameItem(SoleilMesh);
-        soleilGameItem.setPosition(0, 2, 0);
-        //soleilGameItem.setRotation(90,0,0);
-        soleilGameItem.setScale(5f);
 
-        Mesh quadMesh = OBJLoader.loadMesh("/models/plane.obj");
-        Material quadMaterial = new Material(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f), reflectance);
+        SoleilGameItem = new GameItem(SoleilMesh);
+        SoleilGameItem.setPosition(0, 1f, 0);
+        SoleilGameItem.setRotation(90,0,0);
+        SoleilGameItem.setScale(0.5f);
+
+
+        Mesh quadMesh = OBJLoader.loadMesh("/models/Table.obj");
+        Material quadMaterial = new Material( chercheTexture("textures/bois.png") );
         quadMesh.setMaterial(quadMaterial);
         GameItem quadGameItem = new GameItem(quadMesh);
-        quadGameItem.setPosition(0, -1, 1);
+        quadGameItem.setPosition(0, -1, 0);
+        quadGameItem.getRotation().z = 90;
         quadGameItem.setScale(2.5f);
 
 
@@ -276,8 +288,13 @@ public class DummyGame implements IGameLogic {
         // Setup Lights
         setupLights();
 
-        camera.getPosition().z = 2;
-        camera.getPosition().y = 1;
+        SkyBox ciel = new SkyBox("/models/skybox.obj",chercheTexture("textures/skyboxFinal_3.png"));
+        scene.setSkyBox(ciel);
+        scene.getSceneLight().setSkyBoxLight(new Vector3f(1,1,1));
+        scene.getSkyBox().setScale(9f);
+
+        camera.getPosition().z = 3;
+        camera.getPosition().y = 1.5f;
         camera.getRotation().x = 30;
         hud = new Hud("Azimut Angle:");
     }
@@ -323,6 +340,16 @@ public class DummyGame implements IGameLogic {
         } else if (window.isKeyPressed(GLFW_KEY_D)) {
             cameraInc.x = 1;
         }
+        if (window.isKeyPressed(GLFW_KEY_R)) {
+            camera.setRotation(camera.getRotation().x+1,camera.getRotation().y,0) ;
+        } else if (window.isKeyPressed(GLFW_KEY_F)) {
+            camera.setRotation(camera.getRotation().x-1,camera.getRotation().y,0) ;
+        }
+        if (window.isKeyPressed(GLFW_KEY_T)) {
+            camera.setRotation(camera.getRotation().x,camera.getRotation().y+1,0) ;
+        } else if (window.isKeyPressed(GLFW_KEY_G)) {
+            camera.setRotation(camera.getRotation().x,camera.getRotation().y-1,0) ;
+        }
         if (window.isKeyPressed(GLFW_KEY_Z)) {
             cameraInc.y = -1;
         } else if (window.isKeyPressed(GLFW_KEY_X)) {
@@ -364,50 +391,43 @@ public class DummyGame implements IGameLogic {
             camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
         }
 
-//        float rotY = basMdfItem.getRotation().z;
-//        rotY += 0.5f;
-//        if ( rotY >= 360 ) {
-//            rotY -= 360;
-//        }
-//        basMdfItem.getRotation().z = rotY;
-//        basAcierItem.getRotation().z = rotY;
-//        basBouleItem.getRotation().z = rotY;
-//        basPignonItem.getRotation().z = rotY;
-//        axeAcierItem.getRotation().z = rotY;
-//        axeMdfItem.getRotation().z = rotY;
-//        axePlastiqueItem.getRotation().z = rotY;
-//        hautPlastiqueItem.getRotation().z =rotY;
-//        hautPmmaItem.getRotation().z = rotY;
-//        hautPanneauItem.getRotation().z = rotY;
-//        hautAcierItem.getRotation().z = rotY;
-//        hautMdfItem.getRotation().z = rotY;
-
-        updatePosition();
-
         Vector3f lightDirection = this.scene.getSceneLight().getDirectionalLight().getDirection();
         Vector3f PointlightDirection = this.scene.getSceneLight().getPointLightList(0).getPosition();
-        if ( soleilGameItem.getPosition().y +1<-0.1){                             // Le soleil est couché
+        Vector3f PointlightDirection_2 = this.scene.getSceneLight().getPointLightList(0).getPosition();
+        float PositionSoleil = SoleilGameItem.getPosition().y+1 ;
+        System.out.println(PositionSoleil);
+        if ( PositionSoleil<-0.5){                             // Le soleil est couché
             this.scene.getSceneLight().getPointLightList(0).setIntensity(0);
             this.scene.getSceneLight().getPointLightList(1).setIntensity(0.2f); // on garde une petite luminosité
+            this.scene.getSceneLight().setSkyBoxLight(new Vector3f(0.1f,0.1f,0.1f));
             lightDirection.x = 0;
             lightDirection.y = 0;
             lightDirection.z = 0;
         } else {
-            this.scene.getSceneLight().getPointLightList(0).setIntensity((soleilGameItem.getPosition().y +1)*0.25f+0.75f); // l'intensité du soleil oscille entre 1 et 0.75
-            this.scene.getSceneLight().getPointLightList(1).setIntensity((soleilGameItem.getPosition().y +1)*0.4f+0.2f);   // l'intensité du soleil' oscille entre 0.6 et 0.2
-            lightDirection.x = soleilGameItem.getPosition().x;
-            lightDirection.y = soleilGameItem.getPosition().y +1;
-            lightDirection.z = soleilGameItem.getPosition().z ;
-            PointlightDirection.x = soleilGameItem.getPosition().x;
-            PointlightDirection.y = soleilGameItem.getPosition().y +1;
-            PointlightDirection.z = soleilGameItem.getPosition().z;
+            this.scene.getSceneLight().getPointLightList(0).setIntensity(PositionSoleil + 0.5f); // l'intensité du soleil oscille entre 1 et 0.75
+            this.scene.getSceneLight().getPointLightList(1).setIntensity(PositionSoleil/2 +0.5f);   // l'intensité du soleil' oscille entre 0.6 et 0.2
+            lightDirection.x = SoleilGameItem.getPosition().x;
+            lightDirection.y = PositionSoleil;
+            lightDirection.z = SoleilGameItem.getPosition().z ;
+            PointlightDirection.x = SoleilGameItem.getPosition().x;
+            PointlightDirection.y = SoleilGameItem.getPosition().y;
+            PointlightDirection.z = SoleilGameItem.getPosition().z;
+            PointlightDirection_2.x = SoleilGameItem.getPosition().x;
+            PointlightDirection_2.y = -0.5f*SoleilGameItem.getPosition().y;
+            PointlightDirection_2.z = - 0.5f*SoleilGameItem.getPosition().z;
+
         }
-        this.scene.getSceneLight().getPointLightList(0).getAttenuation().setExponent(0.75f*Math.abs((zenithSoleilpourAffichage/90)+1));
-        this.scene.getSceneLight().getDirectionalLight().setIntensity(soleilGameItem.getPosition().y +1);
+        coucherDeSoleil(PositionSoleil);
+        this.scene.getSceneLight().getPointLightList(0).getAttenuation().setExponent(Math.abs((zenithSoleilpourAffichage/90)+1));
+        this.scene.getSceneLight().getDirectionalLight().setIntensity(PositionSoleil/2);
+
         PointlightDirection.normalize();
         lightDirection.normalize();
         hud.setStatusText("Azimut = " + azimutSoleil+" / zenith (angle) = "+ zenithSoleil+" / zenith (definition) = " + zenithSoleilpourAffichage);
+      
+        updatePosition();
 
+        this.scene.getSkyBox().setPosition(-camera.getPosition().x,-camera.getPosition().y+7.4f,-camera.getPosition().z);
     }
 
     @Override
@@ -428,17 +448,37 @@ public class DummyGame implements IGameLogic {
     }
 
     public void angleSoleil( float Ze, float Az ){
-        if (Ze>=360 || Ze<=-360){ zenithSoleil=0;}
-        if (Az>=360|| Az<=-360){ azimutSoleil =0;}
+
+        if (Ze>=360 || Ze<=-360){ zenithSoleil=0;}  // Pas obligatoire
+        if (Az>=360|| Az<=-360){ azimutSoleil =0;}  // Pas obligatoire non plus
+        float Rayon = 3f;
         float radZe = (float) Math.toRadians(Ze);
         float radAz = (float) Math.toRadians(Az);
-        float nouvX = (float)( 3*Math.cos(radZe)*Math.cos(radAz));
-        float nouvY = (float)( 3*Math.sin(radZe)-1);
-        float nouvZ = (float)( 3*Math.cos(radZe)*Math.sin(radAz));
-        soleilGameItem.getPosition().x = nouvX;
-        soleilGameItem.getPosition().y = nouvY;
-        soleilGameItem.getPosition().z = nouvZ;
-        //AffichageZenith(Ze);
+        float nouvX = (float)( Math.cos(radZe)*Math.cos(radAz)*Rayon);
+        float nouvY = (float)( Math.sin(radZe)*Rayon)-2;
+        float nouvZ = (float)( Math.cos(radZe)*Math.sin(radAz)*Rayon);
+        SoleilGameItem.getPosition().x = nouvX;
+        SoleilGameItem.getPosition().y = nouvY;
+        SoleilGameItem.getPosition().z = nouvZ;
+        AffichageZenith( Ze);
+
+        cubeGameItem.setRotation(90,0,Az);
+    }
+
+    public void coucherDeSoleil (float PositionSoleil){
+        float Xsoleil = SoleilGameItem.getPosition().x*0.05f;
+        float Zsoleil = SoleilGameItem.getPosition().z*0.05f;
+        float Coef = PositionSoleil/2;
+        Vector3f vecLum = new Vector3f(Coef+Xsoleil+0.14f,Coef+Zsoleil+0.14f,Coef+Zsoleil*Xsoleil+0.14f);
+        this.scene.getSceneLight().setSkyBoxLight(vecLum);
+    }
+
+    public Texture chercheTexture ( String NomTexture) throws Exception {
+        URL res = getClass().getClassLoader().getResource(NomTexture);
+        File file = Paths.get(res.toURI()).toFile();
+        String absolutePath = file.getAbsolutePath();
+        Texture textureSoleil = new Texture(absolutePath);
+        return  textureSoleil;
     }
 
     public void AffichageZenith ( float Ze){
