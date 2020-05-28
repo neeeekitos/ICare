@@ -317,7 +317,7 @@ public class DummyGame implements IGameLogic {
         // Point Light Représentant le soleil
         PointLight [] source = new PointLight[2];
         float Point_lightIntensity = 0.8f;
-        Vector3f PointlightDirection_0 = new Vector3f(soleilGameItem.getPosition().x, soleilGameItem.getPosition().y, soleilGameItem.getPosition().z); // Soleil principal
+        Vector3f PointlightDirection_0 = new Vector3f(0,0,0);// Soleil principal
         PointLight.Attenuation AttenuationSoleil = new PointLight.Attenuation(0,0,0.7f);
         source [0] = new PointLight(new Vector3f(1,1,1),PointlightDirection_0,Point_lightIntensity);
         source [0].setAttenuation(AttenuationSoleil);
@@ -395,7 +395,6 @@ public class DummyGame implements IGameLogic {
         Vector3f PointlightDirection = this.scene.getSceneLight().getPointLightList(0).getPosition();
         Vector3f PointlightDirection_2 = this.scene.getSceneLight().getPointLightList(0).getPosition();
         float PositionSoleil = SoleilGameItem.getPosition().y+1 ;
-        System.out.println(PositionSoleil);
         if ( PositionSoleil<-0.5){                             // Le soleil est couché
             this.scene.getSceneLight().getPointLightList(0).setIntensity(0);
             this.scene.getSceneLight().getPointLightList(1).setIntensity(0.2f); // on garde une petite luminosité
@@ -462,7 +461,6 @@ public class DummyGame implements IGameLogic {
         SoleilGameItem.getPosition().z = nouvZ;
         AffichageZenith( Ze);
 
-        cubeGameItem.setRotation(90,0,Az);
     }
 
     public void coucherDeSoleil (float PositionSoleil){
