@@ -212,7 +212,7 @@ public class DummyGame implements IGameLogic {
         asmHautMdf.setMaterial(asmHautMdfMaterial);
         hautMdfItem = new GameItem(asmHautMdf);
         hautMdfItem.setPosition(0, (float) -0.856, 0);
-        hautMdfItem.setRotation(90,0,0);
+        hautMdfItem.setRotation(0,0,0);
         hautMdfItem.setScale(0.5f);
 
         Mesh asmHautAcier = OBJLoader.loadMesh("/models/Asm_Haut_Metal.obj");
@@ -221,7 +221,7 @@ public class DummyGame implements IGameLogic {
         asmHautAcier.setMaterial(asmAcierMdfMaterial);
         hautAcierItem = new GameItem(asmHautAcier);
         hautAcierItem.setPosition(0, (float) -0.856, 0);
-        hautAcierItem.setRotation(90,0,0);
+        hautAcierItem.setRotation(0,0,0);
         hautAcierItem.setScale(0.5f);
 
         Mesh asmHautPlastique = OBJLoader.loadMesh("/models/Asm_Haut_plastique.obj");
@@ -230,7 +230,7 @@ public class DummyGame implements IGameLogic {
         asmHautPlastique.setMaterial(asmHautPlastiqueMaterial);
         hautPlastiqueItem = new GameItem(asmHautPlastique);
         hautPlastiqueItem.setPosition(0, (float) -0.856, 0);
-        hautPlastiqueItem.setRotation(90,0,0);
+        hautPlastiqueItem.setRotation(0,0,0);
         hautPlastiqueItem.setScale(0.5f);
 
         Mesh asmHautPmma = OBJLoader.loadMesh("/models/Asm_Haut_pmma.obj");
@@ -239,7 +239,7 @@ public class DummyGame implements IGameLogic {
         asmHautPmma.setMaterial(asmHautPmmaMaterial);
         hautPmmaItem = new GameItem(asmHautPmma);
         hautPmmaItem.setPosition(0, (float) -0.856, 0);
-        hautPmmaItem.setRotation(90,0,0);
+        hautPmmaItem.setRotation(0,0,0);
         hautPmmaItem.setScale(0.5f);
 
         Mesh asmHautPanneau = OBJLoader.loadMesh("/models/Asm_Haut_panneau.obj");
@@ -248,7 +248,7 @@ public class DummyGame implements IGameLogic {
         asmHautPanneau.setMaterial(asmHautPanneauMaterial);
         hautPanneauItem = new GameItem(asmHautPanneau);
         hautPanneauItem.setPosition(0, (float) -0.856, 0);
-        hautPanneauItem.setRotation(90,0,0);
+        hautPanneauItem.setRotation(0,0,0);
         hautPanneauItem.setScale(0.5f);
         
         //Soleil
@@ -269,7 +269,7 @@ public class DummyGame implements IGameLogic {
         quadGameItem.setScale(2.5f);
 
 
-        scene.setGameItems(new GameItem[]{ basPignonItem,basMdfItem,basAcierItem,SoleilGameItem, axePlastiqueItem,
+        scene.setGameItems(new GameItem[]{ basPignonItem,basMdfItem,basAcierItem, axePlastiqueItem,
                 axeMdfItem, basBouleItem, axeAcierItem, hautMdfItem, hautAcierItem, hautPanneauItem, hautPlastiqueItem, hautPmmaItem, quadGameItem});
 
 
@@ -364,23 +364,23 @@ public class DummyGame implements IGameLogic {
             camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
         }
 
-        float rotY = basMdfItem.getRotation().z;
-        rotY += 0.5f;
-        if ( rotY >= 360 ) {
-            rotY -= 360;
-        }
-        basMdfItem.getRotation().z = rotY;
-        basAcierItem.getRotation().z = rotY;
-        basBouleItem.getRotation().z = rotY;
-        basPignonItem.getRotation().z = rotY;
-        axeAcierItem.getRotation().z = rotY;
-        axeMdfItem.getRotation().z = rotY;
-        axePlastiqueItem.getRotation().z = rotY;
-        hautPlastiqueItem.getRotation().z =rotY;
-        hautPmmaItem.getRotation().z = rotY;
-        hautPanneauItem.getRotation().z = rotY;
-        hautAcierItem.getRotation().z = rotY;
-        hautMdfItem.getRotation().z = rotY;
+//        float rotY = basMdfItem.getRotation().z;
+//        rotY += 0.5f;
+//        if ( rotY >= 360 ) {
+//            rotY -= 360;
+//        }
+//        basMdfItem.getRotation().z = rotY;
+//        basAcierItem.getRotation().z = rotY;
+//        basBouleItem.getRotation().z = rotY;
+//        basPignonItem.getRotation().z = rotY;
+//        axeAcierItem.getRotation().z = rotY;
+//        axeMdfItem.getRotation().z = rotY;
+//        axePlastiqueItem.getRotation().z = rotY;
+//        hautPlastiqueItem.getRotation().z =rotY;
+//        hautPmmaItem.getRotation().z = rotY;
+//        hautPanneauItem.getRotation().z = rotY;
+//        hautAcierItem.getRotation().z = rotY;
+//        hautMdfItem.getRotation().z = rotY;
 
         updatePosition();
 
@@ -457,11 +457,26 @@ public class DummyGame implements IGameLogic {
 
     public void updatePosition() {
         //update tout d'abord y, puis z
-        hautGameItem.getRotation().y = azimutSoleil;
-        hautGameItem.getRotation().z = 90-zenithSoleil;
+        hautPlastiqueItem.getRotation().y =azimutSoleil;
+        hautPmmaItem.getRotation().y = azimutSoleil;
+        hautPanneauItem.getRotation().y = azimutSoleil;
+        hautAcierItem.getRotation().y = azimutSoleil;
+        hautMdfItem.getRotation().y = azimutSoleil;
+
+        hautPlastiqueItem.getRotation().z =90-zenithSoleil;
+        hautPmmaItem.getRotation().z = 90-zenithSoleil;
+        hautPanneauItem.getRotation().z = 90-zenithSoleil;
+        hautAcierItem.getRotation().z = 90-zenithSoleil;
+        hautMdfItem.getRotation().z = 90-zenithSoleil;
+
+//        hautGameItem.getRotation().y = azimutSoleil;
+//        hautGameItem.getRotation().z = 90-zenithSoleil;
 
         //ici on tourne autour du z car l'axe a un autre repere
-        axeGameItem.getRotation().z = azimutSoleil;
+        axeAcierItem.getRotation().z = azimutSoleil;
+        axeMdfItem.getRotation().z = azimutSoleil;
+        axePlastiqueItem.getRotation().z = azimutSoleil;
+//        axeGameItem.getRotation().z = azimutSoleil;
 
         //        hautGameItem.setRotation(0,0,0);
 //        hautGameItem.getRotation().z = azimutSoleil;
