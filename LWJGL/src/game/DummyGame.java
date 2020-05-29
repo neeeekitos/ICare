@@ -3,49 +3,32 @@ package game;
 import engine.*;
 import engine.graph.*;
 import engine.graph.lights.PointLight;
-import engine.graph.lights.SpotLight;
 import engine.items.SkyBox;
-import javafx.geometry.Pos;
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-
 import engine.graph.lights.DirectionalLight;
 import engine.items.GameItem;
 import engine.items.Terrain;
-import org.lwjgl.opengl.GL11;
-import sun.security.provider.certpath.Vertex;
-
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
 
-import java.io.File;
-import java.net.URL;
-import java.nio.file.Paths;
-
-import java.io.File;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.file.Paths;
-import java.util.Vector;
 
 public class DummyGame implements IGameLogic {
 
     private static final float MOUSE_SENSITIVITY = 0.2f;
 
     private final Vector3f cameraInc;
-
     private final Renderer renderer;
-
     private final Camera camera;
 
-    private Mesh mesh;
     private Scene scene;
+
+    private boolean isManualMode;
+
+    Rotation rotateMoteurs;
 
     private Hud hud;
 
@@ -53,32 +36,21 @@ public class DummyGame implements IGameLogic {
 
     private Terrain terrain;
 
+    private int touchCounter = 0;
+
     private GameItem SoleilGameItem;
-
     private GameItem basMdfItem;
-
     private GameItem basAcierItem;
-
     private GameItem basPignonItem;
-
     private GameItem axeAcierItem;
-
     private GameItem axeMdfItem;
-
     private GameItem axePlastiqueItem;
-
     private GameItem hautMdfItem;
-
     private GameItem hautAcierItem;
-
     private GameItem hautPlastiqueItem;
-
     private GameItem hautPmmaItem;
-
     private GameItem hautPanneauItem;
-
     private GameItem basBouleItem;
-
     private GameItem batiGameItem;
     private GameItem axeGameItem;
     private GameItem hautGameItem;
@@ -103,6 +75,9 @@ public class DummyGame implements IGameLogic {
         renderer.init(window);
 
         scene = new Scene();
+
+        rotateMoteurs = new Rotation(0,0);
+
 
         // Setup  GameItems
         Texture textureMDF = chercheTexture("textures/marron_clair.png");
@@ -308,6 +283,13 @@ public class DummyGame implements IGameLogic {
 
     @Override
     public void input(Window window, MouseInput mouseInput) {
+        if (window.isKeyPressed(GLFW_KEY_M)) {
+            if (touchCounter < 1) {
+                isManualMode = !isManualMode; // switcher le mode manuel
+                System.out.println("Manual mode is " + ((isManualMode) ? "ON" : "OFF"));
+            }
+            touchCounter++;
+        } else { touchCounter = 0; }
         cameraInc.set(0, 0, 0);
         if (window.isKeyPressed(GLFW_KEY_W)) {
             cameraInc.z = -1;
@@ -334,21 +316,25 @@ public class DummyGame implements IGameLogic {
         } else if (window.isKeyPressed(GLFW_KEY_X)) {
             cameraInc.y = 1;
         }
-        if (window.isKeyPressed(GLFW_KEY_UP)) {
+        if (window.isKeyPressed(GLFW_KEY_UP) && isManualMode) {
             // limiter zenithSoleil : toujours < 180
-            zenithSoleil = Math.min(++zenithSoleil, 180);
+            zenithSoleil++;
             angleSoleil(zenithSoleil,azimutSoleil);
-        } else if (window.isKeyPressed(GLFW_KEY_DOWN)) {
+            rotateMoteurs.getMoteurHaut().setAngle(90-zenithSoleil);
+        } else if (window.isKeyPressed(GLFW_KEY_DOWN) && isManualMode) {
             // limiter zenithSoleil : toujours > 0
-            zenithSoleil = Math.max(--zenithSoleil, 0);
+            zenithSoleil--;
             angleSoleil(zenithSoleil,azimutSoleil);
+            rotateMoteurs.getMoteurHaut().setAngle(90-zenithSoleil);
         }
-        if (window.isKeyPressed(GLFW_KEY_LEFT)) {
+        if (window.isKeyPressed(GLFW_KEY_LEFT) && isManualMode) {
             azimutSoleil -= 1;
             angleSoleil(zenithSoleil,azimutSoleil);
-        } else if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
+            rotateMoteurs.getMoteurBas().setAngle(azimutSoleil);
+        } else if (window.isKeyPressed(GLFW_KEY_RIGHT) && isManualMode) {
             azimutSoleil += 1;
             angleSoleil(zenithSoleil,azimutSoleil);
+            rotateMoteurs.getMoteurBas().setAngle(azimutSoleil);
         }
     }
 
@@ -401,8 +387,8 @@ public class DummyGame implements IGameLogic {
 
         PointlightDirection.normalize();
         lightDirection.normalize();
-        hud.setStatusText("Azimut = " + azimutSoleil+" / zenith (angle) = "+ zenithSoleil+" / zenith (definition) = " + zenithSoleilpourAffichage);
-      
+        hud.setStatusText("Manual mode is : " + ((isManualMode) ? "ON" : "OFF") +
+                "   |   Azimut = " + azimutSoleil+" / zenith (angle) = "+ zenithSoleil+" / zenith (definition) = " + zenithSoleilpourAffichage);
         updatePosition();
 
         this.scene.getSkyBox().setPosition(-camera.getPosition().x,-camera.getPosition().y+7.4f,-camera.getPosition().z);
@@ -439,8 +425,7 @@ public class DummyGame implements IGameLogic {
         SoleilGameItem.getPosition().x = nouvX;
         SoleilGameItem.getPosition().y = nouvY;
         SoleilGameItem.getPosition().z = nouvZ;
-        AffichageZenith( Ze);
-
+        AffichageZenith(Ze);
     }
 
     public void coucherDeSoleil (float PositionSoleil){
@@ -488,61 +473,13 @@ public class DummyGame implements IGameLogic {
     }
 
     public void updatePosition() {
-        //update tout d'abord y, puis z
-        hautPlastiqueItem.getRotation().y =azimutSoleil;
-        hautPmmaItem.getRotation().y = azimutSoleil;
-        hautPanneauItem.getRotation().y = azimutSoleil;
-        hautAcierItem.getRotation().y = azimutSoleil;
-        hautMdfItem.getRotation().y = azimutSoleil;
 
-        hautPlastiqueItem.getRotation().z =90-zenithSoleil;
-        hautPmmaItem.getRotation().z = 90-zenithSoleil;
-        hautPanneauItem.getRotation().z = 90-zenithSoleil;
-        hautAcierItem.getRotation().z = 90-zenithSoleil;
-        hautMdfItem.getRotation().z = 90-zenithSoleil;
+        rotateMoteurs.getMoteurBas().tournerVerticalement(new GameItem[] {hautPlastiqueItem, hautPmmaItem, hautPanneauItem, hautAcierItem, hautMdfItem});
+        rotateMoteurs.getMoteurHaut().tournerHorizontalement(new GameItem[] {hautPlastiqueItem, hautPmmaItem, hautPanneauItem, hautAcierItem, hautMdfItem});
 
-//        hautGameItem.getRotation().y = azimutSoleil;
-//        hautGameItem.getRotation().z = 90-zenithSoleil;
-
-        //ici on tourne autour du z car l'axe a un autre repere
         axeAcierItem.getRotation().z = azimutSoleil;
         axeMdfItem.getRotation().z = azimutSoleil;
         axePlastiqueItem.getRotation().z = azimutSoleil;
-//        axeGameItem.getRotation().z = azimutSoleil;
-
-        //        hautGameItem.setRotation(0,0,0);
-//        hautGameItem.getRotation().z = azimutSoleil;
-//        axeGameItem.getRotation().z = azimutSoleil; //car décalé par rapport à la base haute
-
-//        glPushMatrix();
-//        glLoadIdentity();
-//        float rotX = hautGameItem.getRotation().x;
-//        float rotY = hautGameItem.getRotation().y;
-//        float rotZ = 0;
-//        glRotatef(rotX, 1.0f, 0.0f, 0.0f);
-//        glRotatef(rotY, 0.0f, 1.0f, 0.0f);
-//        glRotatef(rotZ, 0.0f, 0.0f, 1.0f);
-//        glLineWidth(2.0f);
-//
-//        glBegin(GL_LINES);
-//        // X Axis
-//        glColor3f(1.0f, 0.0f, 0.0f);
-//        glVertex3f(0.0f, 0.0f, 0.0f);
-//        glVertex3f(1.0f, 0.0f, 0.0f);
-//        // Y Axis
-//        glColor3f(0.0f, 1.0f, 0.0f);
-//        glVertex3f(0.0f, 0.0f, 0.0f);
-//        glVertex3f(0.0f, 1.0f, 0.0f);
-//        // Z Axis
-//        glColor3f(1.0f, 1.0f, 1.0f);
-//        glVertex3f(0.0f, 0.0f, 0.0f);
-//        glVertex3f(0.0f, 0.0f, 1.0f);
-//        glEnd();
-//
-//        glPopMatrix();
-//        float radAz = (float) Math.toRadians(azimutSoleil);
-//        hautGameItem.getRotation().x = (float) (zenithSoleil*Math.cos(radAz));
-//        hautGameItem.getRotation().z = (float) (zenithSoleil*Math.sin(radAz));
     }
 
 }
