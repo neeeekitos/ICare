@@ -104,25 +104,10 @@ public class DummyGame implements IGameLogic {
 
         scene = new Scene();
 
-
         // Setup  GameItems
-        URL res1 = getClass().getClassLoader().getResource("textures/marron_clair.png");
-        File file1 = Paths.get(res1.toURI()).toFile();
-        String absolutePath1 = file1.getAbsolutePath();
-        Texture textureMDF = new Texture(absolutePath1);
-        //cubeMaterial.setTexture(texture);
-
-        URL res2 = getClass().getClassLoader().getResource("textures/acier.png");
-        File file2 = Paths.get(res2.toURI()).toFile();
-        String absolutePath2 = file2.getAbsolutePath();
-        Texture textureAcier = new Texture(absolutePath2);
-        //cubeMaterial.setTexture(texture);
-
-        URL res3 = getClass().getClassLoader().getResource("textures/blanc.png");
-        File file3 = Paths.get(res3.toURI()).toFile();
-        String absolutePath3 = file3.getAbsolutePath();
-        Texture textureBlanc = new Texture(absolutePath3);
-        //cubeMaterial.setTexture(texture);
+        Texture textureMDF = chercheTexture("textures/marron_clair.png");
+        Texture textureAcier = chercheTexture("textures/acier.png");
+        Texture textureBlanc = chercheTexture("textures/blanc.png");
 
         float reflectance = 1f;
 
@@ -421,6 +406,7 @@ public class DummyGame implements IGameLogic {
         updatePosition();
 
         this.scene.getSkyBox().setPosition(-camera.getPosition().x,-camera.getPosition().y+7.4f,-camera.getPosition().z);
+        sortieCamera();
     }
 
     @Override
@@ -471,6 +457,20 @@ public class DummyGame implements IGameLogic {
         String absolutePath = file.getAbsolutePath();
         Texture textureSoleil = new Texture(absolutePath);
         return  textureSoleil;
+    }
+
+    public void sortieCamera(){
+        float Xcam = camera.getPosition().x;
+        float Ycam = camera.getPosition().y;
+        float Zcam = camera.getPosition().z;
+        float limite = scene.getSkyBox().getScale();
+        limite = limite - limite/15;
+        if (Xcam <= -limite ){ camera.setPosition(-limite ,Ycam,Zcam); }
+        if (Xcam >= limite ){ camera.setPosition(limite ,Ycam,Zcam); }
+        if (Ycam <= -1.4 ){ camera.setPosition(Xcam,-1.4f,Zcam); }
+        if (Ycam > 12 ){ camera.setPosition(Xcam,12,Zcam); }
+        if (Zcam <= -limite ){ camera.setPosition(Xcam,Ycam,-limite); }
+        if (Zcam > limite ){ camera.setPosition(Xcam,Ycam,limite); }
     }
 
     public void AffichageZenith ( float Ze){
