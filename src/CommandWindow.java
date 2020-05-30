@@ -14,7 +14,7 @@ public class CommandWindow {
 
     public CommandWindow() {
 
-        jLabelEntrer.addMouseListener(new MouseAdapter() {
+        /*jLabelEntrer.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e) {
                 new JOptionPane().showMessageDialog(null, "Vous avez entré l'azimut : " + jFieldAzimut.getText() + " et le zénith : " + jFieldZenith.getText() + " .");
@@ -24,7 +24,7 @@ public class CommandWindow {
             public void mouseEntered(MouseEvent e) {
                 jLabelEntrer.setOpaque(true);
             }
-        });
+        });*/
         jLabelEntrer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 

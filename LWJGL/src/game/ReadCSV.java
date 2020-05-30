@@ -2,6 +2,9 @@ package game;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class ReadCSV {
@@ -15,7 +18,7 @@ public class ReadCSV {
     /***
     * Constructeur de la class game.ReadCSV
      ***/
-    public ReadCSV(){
+    public ReadCSV()  {
         fileName = "doc/solarOrbit.csv";
         file = new File(fileName);
         pm=false;
@@ -53,5 +56,11 @@ public class ReadCSV {
             e.printStackTrace();
         }
         return data;
+    }
+
+    public void lecture (){
+        for (int i = 0 ; i <= data[0].length; i++){
+            System.out.println("Temps : " +data[0][i] + " / Zenith : "+ data[1][i] + " / Azimut : " + data[2][i]);
+        }
     }
 }
