@@ -1,3 +1,5 @@
+package game;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -11,7 +13,7 @@ public class ReadCSV {
     private File file;
 
     /***
-    * Constructeur de la class ReadCSV
+    * Constructeur de la class game.ReadCSV
      ***/
     public ReadCSV(){
         fileName = "doc/solarOrbit.csv";

@@ -1,4 +1,5 @@
-import java.awt.event.*;
+package game;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -9,16 +10,20 @@ public class Rotation {
     private double[][] data;
     private ReadCSV r;
     private int i;
+    MoteurSeul moteurHaut;
+    MoteurSeul moteurBas;
 
-    /***
-    * constructeur de la classe Rotation
-     ***/
+    /**
+    * constructeur de la classe game.Rotation
+     **/
     public Rotation(int zIni, int aIni) {
         temps=100;
         r = new ReadCSV();
         data = r.getData();
         zenithIni=zIni;
         azimuthIni=aIni;
+        moteurHaut = new MoteurSeul("moteurHaut", zenithIni, 170);
+        moteurBas = new MoteurSeul("moteurBas", azimuthIni, 170);
         i=0;
 
         Timer time= new Timer();
@@ -48,6 +53,8 @@ public class Rotation {
         zenithIni=zenithIni+zenithAppliquer;
         azimuthIni=azimuthIni+azimuthAppliquer;
 
+        moteurHaut.setAngle(zenithIni);
+        moteurBas.setAngle(azimuthIni);
     }
 
     public int getAzimuthIni(){
@@ -58,6 +65,13 @@ public class Rotation {
         return zenithIni;
     }
 
+    public MoteurSeul getMoteurHaut() {
+        return moteurHaut;
+    }
+
+    public MoteurSeul getMoteurBas() {
+        return moteurBas;
+    }
 
     public static void main(String[] args) {
 
