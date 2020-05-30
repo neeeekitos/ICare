@@ -65,6 +65,8 @@ public class DummyGame implements IGameLogic {
 
     private float zenithSoleilpourAffichage; //Correspond à un l'angle entre le plan x0z et y est compris entre -90° et 90°
 
+    private Unthread thread;
+
     public DummyGame() {
         renderer = new Renderer();
         camera = new Camera();
@@ -258,13 +260,18 @@ public class DummyGame implements IGameLogic {
         camera.getPosition().y = 1.5f;
         camera.getRotation().x = 25;
         hud = new Hud("Azimut Angle:");
+
+        thread = new Unthread(rotateMoteurs);
+        thread.start();
+
     }
 
     @Override
     public void input(Window window, MouseInput mouseInput) {
-        if (window.isKeyPressed(GLFW_KEY_M)) {
+        if (window.isKeyPressed(GLFW_KEY_U)) {
             if (touchCounter < 1) {
                 isManualMode = !isManualMode; // switcher le mode manuel
+                thread.setIsManualMode(isManualMode);
                 System.out.println("Manual mode is " + ((isManualMode) ? "ON" : "OFF"));
             }
             touchCounter++;
@@ -347,7 +354,7 @@ public class DummyGame implements IGameLogic {
 
         SoleilGameItem.mise_a_jour();   //Luminosité en fonction de la position du soleil
         SoleilGameItem.coucherDeSoleil();
-        hud.setStatusText("Azimut = " + SoleilGameItem.getAzimutSoleil()+" / zenith (angle) = "+ SoleilGameItem.getZenithSoleil()+" zenith (definition) = " + SoleilGameItem.getZenithSoleilpourAffichage());
+        hud.setStatusText("Azimut = " + SoleilGameItem.getAzimutSoleil()+" / zenith (angle) = "+ SoleilGameItem.getZenithSoleil()+" zenith (definition) = " + SoleilGameItem.getZenithSoleilpourAffichage()+" Manual mode : "+isManualMode);
 
         updatePosition();
 
