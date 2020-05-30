@@ -25,19 +25,6 @@ public class Rotation {
         moteurHaut = new MoteurSeul("moteurHaut", zenithIni, 170);
         moteurBas = new MoteurSeul("moteurBas", azimuthIni, 170);
         i=0;
-
-        Timer time= new Timer();
-        time.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if(i<96) {
-                    calcul((int) data[1][i], (int) data[2][i]);
-                    i++;
-                } else {
-                    time.cancel();
-                }
-            }
-        },temps,temps);
     }
 
     /***
@@ -73,8 +60,8 @@ public class Rotation {
         return moteurBas;
     }
 
-    public static void main(String[] args) {
-
-        Rotation r = new Rotation(40,50);
+    public double[][] getData(){
+        return data;
     }
+
 }
