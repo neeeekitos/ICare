@@ -1,5 +1,7 @@
 package engine;
 
+import game.Fenetre_Interface;
+
 public class GameEngine implements Runnable {
 
     public static final int TARGET_FPS = 75;
@@ -14,6 +16,8 @@ public class GameEngine implements Runnable {
 
     private final MouseInput mouseInput;
 
+    private Fenetre_Interface fen;
+
     public GameEngine(String windowTitle, boolean vSync, IGameLogic gameLogic) throws Exception {
         this(windowTitle, 0, 0, vSync, gameLogic);
     }
@@ -23,10 +27,16 @@ public class GameEngine implements Runnable {
         mouseInput = new MouseInput();
         this.gameLogic = gameLogic;
         timer = new Timer();
+        fen = new Fenetre_Interface();
     }
 
     @Override
     public void run() {
+        boolean affichage = false;
+        while(  affichage == false){
+            affichage = fen.getAffichage();
+            System.out.println(affichage);   //Obligatoire mais pourquoi
+        }
         try {
             init();
             gameLoop();
@@ -41,7 +51,8 @@ public class GameEngine implements Runnable {
         window.init();
         timer.init();
         mouseInput.init(window);
-        gameLogic.init(window);
+        gameLogic.init(window, fen.getManuel() );
+        fen.getFrame().dispose();
     }
 
     protected void gameLoop() {
