@@ -74,8 +74,10 @@ public class DummyGame implements IGameLogic {
     }
 
     @Override
-    public void init(Window window) throws Exception {
+    public void init(Window window, boolean manuel) throws Exception {
         renderer.init(window);
+
+        isManualMode = manuel;
 
         scene = new Scene();
 
@@ -229,6 +231,7 @@ public class DummyGame implements IGameLogic {
         SoleilGameItem.setPosition(0, 1.5f, 0);
         SoleilGameItem.setRotation(90,0,0);
         SoleilGameItem.setScale(0.5f);
+
         zenithSoleil = SoleilGameItem.getZenithSoleil();
         azimutSoleil = SoleilGameItem.getAzimutSoleil();
         zenithSoleilpourAffichage = zenithSoleil;
@@ -302,13 +305,13 @@ public class DummyGame implements IGameLogic {
         if (window.isKeyPressed(GLFW_KEY_UP) && isManualMode) {
             // limiter zenithSoleil : toujours < 180
             zenithSoleil++;
-            SoleilGameItem.setZenithSoleil(zenithSoleil);
+            //SoleilGameItem.setZenithSoleil(zenithSoleil);
             SoleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
             rotateMoteurs.getMoteurHaut().setAngle(90-zenithSoleil);
         } else if (window.isKeyPressed(GLFW_KEY_DOWN) && isManualMode) {
             // limiter zenithSoleil : toujours > 0
             zenithSoleil--;
-            SoleilGameItem.setZenithSoleil(zenithSoleil);
+           // SoleilGameItem.setZenithSoleil(zenithSoleil);
             SoleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
             rotateMoteurs.getMoteurHaut().setAngle(90-zenithSoleil);
         }
@@ -323,6 +326,12 @@ public class DummyGame implements IGameLogic {
             SoleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
             rotateMoteurs.getMoteurBas().setAngle(azimutSoleil);
         }
+        System.out.println("Az " + azimutSoleil +" / Ze " + zenithSoleil );
+        System.out.println("Az SO " + SoleilGameItem.getAzimutSoleil() +" / Ze SO" + SoleilGameItem.getZenithSoleil() );
+
+        if (window.isKeyPressed(GLFW_KEY_O)) {
+            new Main();
+        }
     }
 
     @Override
@@ -334,14 +343,14 @@ public class DummyGame implements IGameLogic {
         }
 
         // Update camera position
-        Vector3f prevPos = new Vector3f(camera.getPosition());
+        /*Vector3f prevPos = new Vector3f(camera.getPosition());
         camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
         // Check if there has been a collision. If true, set the y position to
         // the maximum height
         float height = terrain != null ? terrain.getHeight(camera.getPosition()) : -Float.MAX_VALUE;
         if (camera.getPosition().y <= height) {
             camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
-        }
+        }*/
 
         SoleilGameItem.mise_a_jour();   //Luminosité en fonction de la position du soleil
         SoleilGameItem.coucherDeSoleil();
@@ -402,6 +411,13 @@ public class DummyGame implements IGameLogic {
         axeAcierItem.getRotation().z = azimutSoleil;
         axeMdfItem.getRotation().z = azimutSoleil;
         axePlastiqueItem.getRotation().z = azimutSoleil;
+    }
+
+    public boolean getManualMode (){
+        return  isManualMode ;
+    }
+    public void setManualMode (boolean b){
+        isManualMode = b ;
     }
 
 }

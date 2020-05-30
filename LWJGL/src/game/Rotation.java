@@ -1,5 +1,7 @@
 package game;
 
+import engine.items.Soleil;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -12,6 +14,7 @@ public class Rotation {
     private int i;
     MoteurSeul moteurHaut;
     MoteurSeul moteurBas;
+    Soleil soleil;
 
     /**
     * constructeur de la classe game.Rotation
@@ -31,7 +34,7 @@ public class Rotation {
      * La classe calcul permet, à partir des angles fournis en entrée et de la position initial du moteur, de calculer l'angle à appliquer au moteur en sorti
      ***/
     public void calcul(int zenith, int azimuth ) {
-        System.out.println("zenith : "+zenithIni+" ; azimuth : "+azimuthIni);
+        //System.out.println("zenith : "+zenithIni+" ; azimuth : "+azimuthIni);
         int azimuthAppliquer=azimuth-azimuthIni;
         int zenithAppliquer=zenith-zenithIni;
 
