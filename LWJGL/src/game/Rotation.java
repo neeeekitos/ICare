@@ -1,5 +1,7 @@
 package game;
 
+import engine.items.Soleil;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -10,13 +12,15 @@ public class Rotation {
     private double[][] data;
     private ReadCSV r;
     private int i;
+    private boolean manuel;
     MoteurSeul moteurHaut;
     MoteurSeul moteurBas;
+    Soleil soleil;
 
     /**
     * constructeur de la classe game.Rotation
      **/
-    public Rotation(int zIni, int aIni) {
+    public Rotation(int zIni, int aIni, boolean manuel,Soleil soleil) {
         temps=100;
         r = new ReadCSV();
         data = r.getData();
@@ -25,13 +29,16 @@ public class Rotation {
         moteurHaut = new MoteurSeul("moteurHaut", zenithIni, 170);
         moteurBas = new MoteurSeul("moteurBas", azimuthIni, 170);
         i=0;
+        this.manuel = manuel;
+        this.soleil = soleil ;
 
         Timer time= new Timer();
         time.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if(i<96) {
+                if(i<96 && manuel == false ) {
                     calcul((int) data[1][i], (int) data[2][i]);
+                    soleil.angleSoleil((int) data[1][i], (int) data[2][i]);
                     i++;
                 } else {
                     time.cancel();
@@ -75,6 +82,6 @@ public class Rotation {
 
     public static void main(String[] args) {
 
-        Rotation r = new Rotation(40,50);
+        Rotation r = new Rotation(40,50, false, null);
     }
 }

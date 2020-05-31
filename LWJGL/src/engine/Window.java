@@ -1,6 +1,8 @@
 package engine;
 
 import static org.lwjgl.glfw.GLFW.*;
+
+import game.Fenetre_Interface;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -21,12 +23,15 @@ public class Window {
 
     private boolean vSync;
 
-    public Window(String title, int width, int height, boolean vSync) {
+    private Fenetre_Interface fen ;
+
+    public Window(String title, int width, int height, boolean vSync,Fenetre_Interface fen ) {
         this.title = title;
         this.width = width;
         this.height = height;
         this.vSync = vSync;
         this.resized = false;
+        this.fen = fen;
     }
 
     public void init() {
@@ -73,6 +78,7 @@ public class Window {
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+                fen.stop();
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
             }
         });
@@ -114,6 +120,10 @@ public class Window {
 
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
+    }
+
+    public void terminer (){
+        glfwTerminate();
     }
 
     public long getWindowHandle() {
@@ -158,6 +168,14 @@ public class Window {
 
     public void setvSync(boolean vSync) {
         this.vSync = vSync;
+    }
+
+    public Fenetre_Interface getFen() {
+        return fen;
+    }
+
+    public void setFen(Fenetre_Interface fen) {
+        this.fen = fen;
     }
 
     public void update() {
