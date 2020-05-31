@@ -39,7 +39,6 @@ public class Rotation {
      ***/
     public void calcul(int zenith, int azimuth ) {
         System.out.println("class Rotation:  zenith : "+zenithIni+" ; azimuth : "+azimuthIni);
-
         int azimuthAppliquer=azimuth-azimuthIni;
         int zenithAppliquer=zenith-zenithIni;
 
@@ -75,7 +74,5 @@ public class Rotation {
     public static void main(String[] args) {
 
         Rotation r = new Rotation(40,50, true);
-
     }
-
 }

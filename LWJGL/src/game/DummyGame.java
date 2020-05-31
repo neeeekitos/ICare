@@ -45,7 +45,6 @@ public class DummyGame implements IGameLogic {
     private Soleil soleilGameItem;
 
     private int touchCounter = 0;
-
     private GameItem basMdfItem;
     private GameItem basAcierItem;
     private GameItem basPignonItem;
@@ -68,8 +67,6 @@ public class DummyGame implements IGameLogic {
 
     private float zenithSoleilpourAffichage; //Correspond à un l'angle entre le plan x0z et y est compris entre -90° et 90°
 
-    private Unthread thread;
-
     public DummyGame() {
         renderer = new Renderer();
         camera = new Camera();
@@ -77,13 +74,11 @@ public class DummyGame implements IGameLogic {
     }
 
     @Override
-
     public void init(Window window) throws Exception {
         
         renderer.init(window);
 
         isManualMode = window.getFen().getManuel();
-
 
         scene = new Scene();
 
@@ -238,7 +233,6 @@ public class DummyGame implements IGameLogic {
         soleilGameItem.setScale(0.5f);
         zenithSoleil = soleilGameItem.getZenithSoleil();
         azimutSoleil = soleilGameItem.getAzimutSoleil();
-
         zenithSoleilpourAffichage = zenithSoleil;
 
         Mesh quadMesh = OBJLoader.loadMesh("/models/Table.obj");
@@ -268,15 +262,13 @@ public class DummyGame implements IGameLogic {
 
         hud = new Hud("Azimut Angle:");
 
-
         thread = new Unthread(rotateMoteurs, soleilGameItem);
         thread.start();
-
     }
 
     @Override
     public void input(Window window, MouseInput mouseInput) {
-        if (window.isKeyPressed(GLFW_KEY_U)) {
+        if (window.isKeyPressed(GLFW_KEY_M)) {
             if (touchCounter < 1) {
                 isManualMode = !isManualMode; // switcher le mode manuel
                 thread.setIsManualMode(isManualMode);
@@ -313,17 +305,14 @@ public class DummyGame implements IGameLogic {
         if (window.isKeyPressed(GLFW_KEY_UP) && isManualMode) {
             // limiter zenithSoleil : toujours < 180
             zenithSoleil++;
-
             soleilGameItem.setZenithSoleil(zenithSoleil);
             soleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
-
             rotateMoteurs.getMoteurHaut().setAngle(90-zenithSoleil);
         } else if (window.isKeyPressed(GLFW_KEY_DOWN) && isManualMode) {
             // limiter zenithSoleil : toujours > 0
             zenithSoleil--;
             soleilGameItem.setZenithSoleil(zenithSoleil);
             soleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
-
             rotateMoteurs.getMoteurHaut().setAngle(90-zenithSoleil);
         }
         if (window.isKeyPressed(GLFW_KEY_LEFT) && isManualMode) {
@@ -337,7 +326,6 @@ public class DummyGame implements IGameLogic {
             soleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
             rotateMoteurs.getMoteurBas().setAngle(azimutSoleil);
         }
-
         if (window.isKeyPressed(GLFW_KEY_O)) {
             try {
                 boolean vSync = true;
@@ -361,14 +349,13 @@ public class DummyGame implements IGameLogic {
         }
 
         // Update camera position
-        /*Vector3f prevPos = new Vector3f(camera.getPosition());
+        Vector3f prevPos = new Vector3f(camera.getPosition());
         camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
         // Check if there has been a collision. If true, set the y position to
         // the maximum height
         float height = terrain != null ? terrain.getHeight(camera.getPosition()) : -Float.MAX_VALUE;
         if (camera.getPosition().y <= height) {
             camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
-
         }
         System.out.println(camera.getPosition().z + " position y " + camera.getPosition().y + "rotation x" + camera.getRotation().x);
 
@@ -376,7 +363,6 @@ public class DummyGame implements IGameLogic {
         soleilGameItem.coucherDeSoleil();
         hud.setStatusText("Manual mode is " + ((isManualMode) ? "ON" : "OFF")+ "       |       " +
                 "Azimut = " + soleilGameItem.getAzimutSoleil()+" / zenith (angle) = "+ soleilGameItem.getZenithSoleil()+" zenith (definition) = " + soleilGameItem.getZenithSoleilpourAffichage());
-
 
         zenithSoleil = soleilGameItem.getZenithSoleil();
         azimutSoleil = soleilGameItem.getAzimutSoleil();
@@ -438,13 +424,6 @@ public class DummyGame implements IGameLogic {
         axeAcierItem.getRotation().z = azimutSoleil;
         axeMdfItem.getRotation().z = azimutSoleil;
         axePlastiqueItem.getRotation().z = azimutSoleil;
-    }
-
-    public boolean getManualMode (){
-        return  isManualMode ;
-    }
-    public void setManualMode (boolean b){
-        isManualMode = b ;
     }
 
 }

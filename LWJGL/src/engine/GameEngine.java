@@ -1,9 +1,8 @@
 package engine;
 
-
 import engine.items.GameItem;
 import game.DummyGame;
-
+import game.Fenetre_Interface;
 
 public class GameEngine implements Runnable {
 
@@ -31,16 +30,10 @@ public class GameEngine implements Runnable {
         mouseInput = new MouseInput();
         this.gameLogic = gameLogic;
         timer = new Timer();
-        fen = new Fenetre_Interface();
     }
 
     @Override
     public void run() {
-        boolean affichage = false;
-        while(  affichage == false){
-            affichage = fen.getAffichage();
-            System.out.println(affichage);   //Obligatoire mais pourquoi
-        }
         try {
             while (!affichage){
                 System.out.println();
@@ -59,8 +52,7 @@ public class GameEngine implements Runnable {
         window.init();
         timer.init();
         mouseInput.init(window);
-        gameLogic.init(window, fen.getManuel() );
-        fen.getFrame().dispose();
+        gameLogic.init(window);
     }
 
     protected void gameLoop() {
