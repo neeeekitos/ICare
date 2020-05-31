@@ -3,8 +3,10 @@ package game;
 public class Unthread extends Thread {
     private Rotation rotateMoteurs;
     private boolean isManualMode;
+    private int time;
 
     public Unthread(Rotation r){
+        time=1500;
         rotateMoteurs=r;
     }
 
@@ -16,7 +18,7 @@ public class Unthread extends Thread {
                 rotateMoteurs.calcul((int) data[1][i], (int) data[2][i]);
                 i++;
                 try {
-                    this.sleep(1500);
+                    this.sleep(time);
                 } catch (InterruptedException ex) {
                 }
             } else {
@@ -28,4 +30,6 @@ public class Unthread extends Thread {
     public void setIsManualMode(boolean is){
         isManualMode=is;
     }
+
+    public void setTime(int time){ this.time=time; }
 }
