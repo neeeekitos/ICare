@@ -2,6 +2,7 @@ package game;
 
 import engine.*;
 import engine.graph.*;
+import engine.graph.Renderer;
 import engine.graph.lights.PointLight;
 import engine.items.SkyBox;
 import engine.items.Soleil;
@@ -9,10 +10,14 @@ import javafx.geometry.Pos;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import static org.lwjgl.glfw.GLFW.*;
 import engine.graph.lights.DirectionalLight;
 import engine.items.GameItem;
 import engine.items.Terrain;
+
+import javax.swing.*;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -42,8 +47,6 @@ public class DummyGame implements IGameLogic {
     private Soleil SoleilGameItem;
 
     private int touchCounter = 0;
-
-    private GameItem SoleilGameItem;
     private GameItem basMdfItem;
     private GameItem basAcierItem;
     private GameItem basPignonItem;
@@ -74,12 +77,12 @@ public class DummyGame implements IGameLogic {
 
     @Override
     public void init(Window window) throws Exception {
+        
         renderer.init(window);
 
         scene = new Scene();
 
-        rotateMoteurs = new Rotation(0,0);
-
+        isManualMode = window.getFen().getManuel();
 
         // Setup  GameItems
         Texture textureMDF = chercheTexture("textures/marron_clair.png");
@@ -255,7 +258,10 @@ public class DummyGame implements IGameLogic {
         camera.getPosition().z = 3;
         camera.getPosition().y = 1.5f;
         camera.getRotation().x = 25;
+
         hud = new Hud("Azimut Angle:");
+
+        rotateMoteurs = new Rotation(0,0, isManualMode,SoleilGameItem);
     }
 
     @Override
@@ -316,6 +322,18 @@ public class DummyGame implements IGameLogic {
             SoleilGameItem.setAzimutSoleil(azimutSoleil);
             SoleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
             rotateMoteurs.getMoteurBas().setAngle(azimutSoleil);
+        }
+        if (window.isKeyPressed(GLFW_KEY_O)) {
+            try {
+                boolean vSync = true;
+                IGameLogic gameLogic = new DummyGame();
+                GameEngine gameEng = new GameEngine("GAME", vSync, gameLogic);
+                window.terminer();
+                gameEng.run();
+            } catch (Exception excp) {
+                excp.printStackTrace();
+                System.exit(-1);
+            }
         }
     }
 

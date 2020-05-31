@@ -1,5 +1,9 @@
 package engine;
 
+import engine.items.GameItem;
+import game.DummyGame;
+import game.Fenetre_Interface;
+
 public class GameEngine implements Runnable {
 
     public static final int TARGET_FPS = 75;
@@ -19,7 +23,8 @@ public class GameEngine implements Runnable {
     }
 
     public GameEngine(String windowTitle, int width, int height, boolean vSync, IGameLogic gameLogic) throws Exception {
-        window = new Window(windowTitle, width, height, vSync);
+        Fenetre_Interface fen = new Fenetre_Interface();
+        window = new Window(windowTitle, width, height, vSync,fen);
         mouseInput = new MouseInput();
         this.gameLogic = gameLogic;
         timer = new Timer();
@@ -28,6 +33,11 @@ public class GameEngine implements Runnable {
     @Override
     public void run() {
         try {
+            boolean affichage = false;
+            while ( affichage == false ){
+                affichage = window.getFen().getAffichage();
+                System.out.println();
+            }
             init();
             gameLoop();
         } catch (Exception excp) {
@@ -67,6 +77,7 @@ public class GameEngine implements Runnable {
                 sync();
             }
         }
+        window.getFen().stop();
     }
 
     protected void cleanup() {

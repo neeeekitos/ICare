@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URISyntaxException;
 
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
+
 public class Fenetre_Interface implements ActionListener {
 
     private JFrame frame;
@@ -38,6 +40,7 @@ public class Fenetre_Interface implements ActionListener {
         frame = new JFrame();
         frame.setSize(700, 400);
         frame.setVisible(true);
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         //pour centrer sur l'ecran
         frame.setLocationRelativeTo(null);
         frame.getContentPane().add(this.panelPrincipal);
@@ -66,21 +69,27 @@ public class Fenetre_Interface implements ActionListener {
         if (e.getSource() == manuelButton) {
             manuel = true;
             affichage = true;
+            frame.dispose();
         }
         if (e.getSource() == fichierExcelButton) {
             manuel = false;
             affichage = true;
             lectureExcel = new ReadCSV() ;
             tableauExcel = lectureExcel.getData();
+            frame.dispose();
 //            lectureExcel.lecture();
         }
         if (e.getSource() == exitButton) {
-            System.exit(-1);
+            System.exit(0);
         }
     }
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
+    }
+
+    public void stop(){
+        System.exit(0);
     }
 
     public boolean getManuel() {
