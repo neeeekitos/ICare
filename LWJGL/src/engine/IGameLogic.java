@@ -2,7 +2,7 @@ package engine;
 
 public interface IGameLogic {
 
-    void init(Window window) throws Exception;
+    void init(Window window, boolean manuel) throws Exception;
     
     void input(Window window, MouseInput mouseInput);
 
