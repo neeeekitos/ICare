@@ -34,12 +34,14 @@ public class MoteurSeul extends GameItem {
     }
 
     public void tournerHorizontalement(GameItem[] itemsToTurn) {
+        System.out.println("classe MoteurSeul zenith : " + angle);
         for (GameItem item : itemsToTurn) {
             item.getRotation().z = angle;
         }
     }
 
     public void tournerVerticalement(GameItem[] itemsToTurn) {
+       // System.out.println("Azimut nouvelle position angle : " + angle);
         for (GameItem item : itemsToTurn) {
             item.getRotation().y = angle;
         }
@@ -73,8 +75,9 @@ public class MoteurSeul extends GameItem {
     }
 
     public void setAngle(float angle) {
+        if (angle >= 360) angle -= 360;
+        if (angle <= 0) angle += 360;
         this.angle = angle;
-        System.out.println(" new position angle : " + angle);
     }
 
     public void Stop(){

@@ -1,11 +1,17 @@
 package game;
 
+import engine.items.Soleil;
+
 public class Unthread extends Thread {
     private Rotation rotateMoteurs;
+    private Soleil soleil;
     private boolean isManualMode;
+    private static int time;
 
-    public Unthread(Rotation r){
+    public Unthread(Rotation r, Soleil soleil){
         rotateMoteurs=r;
+        this.soleil = soleil;
+
     }
 
     public void run(){
@@ -13,10 +19,17 @@ public class Unthread extends Thread {
         int i=0;
         while(i<data[1].length) {
             if (!isManualMode) {
-                rotateMoteurs.calcul((int) data[1][i], (int) data[2][i]);
+                int Ze = (int) data[1][i];
+                int Az =  (int) data[2][i];
+
+                soleil.angleSoleil(Ze, Az);
+                rotateMoteurs.getMoteurHaut().setAngle(90-Ze);
+                rotateMoteurs.getMoteurBas().setAngle(Az);
+
                 i++;
                 try {
-                    this.sleep(1500);
+                    this.sleep(time);
+
                 } catch (InterruptedException ex) {
                 }
             } else {
@@ -28,4 +41,13 @@ public class Unthread extends Thread {
     public void setIsManualMode(boolean is){
         isManualMode=is;
     }
+
+    public static void setIntervalUpdate(int seconds) {
+        System.out.println(seconds + "intervalle");
+        if (seconds == 0) seconds = 1; // default value
+        time = seconds*1000; //convertir en ms
+    }
+
+    public void setTime(int time){ this.time=time; }
 }
+

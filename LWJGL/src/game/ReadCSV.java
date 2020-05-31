@@ -1,5 +1,8 @@
 package game;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -12,15 +15,18 @@ public class ReadCSV {
     private double[][] data; // temps | zenith | azimuth
     private int i;
     private int taille;
-    private String fileName;
+    private String filePath = "";
     private File file;
 
     /***
     * Constructeur de la class game.ReadCSV
      ***/
-    public ReadCSV()  {
-        fileName = "doc/solarOrbit.csv";
-        file = new File(fileName);
+    public ReadCSV(){
+
+        filePath = openExcel();
+        file = new File(filePath);
+        System.out.println("The selected file is: " + filePath);
+        System.out.println("ouverture d'explorateur des fichiers");
         pm=false;
         taille=96;
         data = new double[3][taille];
@@ -58,9 +64,29 @@ public class ReadCSV {
         return data;
     }
 
-    public void lecture (){
-        for (int i = 0 ; i <= data[0].length; i++){
-            System.out.println("Temps : " +data[0][i] + " / Zenith : "+ data[1][i] + " / Azimut : " + data[2][i]);
+    public String openExcel() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Le fichier csv", "csv"));
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setMultiSelectionEnabled(false);
+        String fileRoute = "";
+
+        int option = fileChooser.showSaveDialog(null);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+
+            if (file != null) {
+                FileFilter fileFilter = fileChooser.getFileFilter();
+
+                FileNameExtensionFilter fileNameExtensionFilter = (FileNameExtensionFilter) fileFilter;
+                String newName = file.getName();
+                file = new File(file.getParent(), newName);
+                fileRoute = file.getAbsolutePath();
+            }
         }
+
+        System.out.println("le fichier csv choisi se trouve : " + fileRoute);
+        return fileRoute;
+
     }
 }

@@ -12,6 +12,7 @@ public class Rotation {
     private double[][] data;
     private ReadCSV r;
     private int i;
+    private boolean manuel;
     MoteurSeul moteurHaut;
     MoteurSeul moteurBas;
     Soleil soleil;
@@ -19,10 +20,13 @@ public class Rotation {
     /**
     * constructeur de la classe game.Rotation
      **/
-    public Rotation(int zIni, int aIni) {
+    public Rotation(int zIni, int aIni, boolean manuel) {
+        this.manuel = manuel;
         temps=100;
-        r = new ReadCSV();
-        data = r.getData();
+        if (!manuel) {
+            r = new ReadCSV();
+            data = r.getData();
+        }
         zenithIni=zIni;
         azimuthIni=aIni;
         moteurHaut = new MoteurSeul("moteurHaut", zenithIni, 170);
@@ -34,7 +38,8 @@ public class Rotation {
      * La classe calcul permet, à partir des angles fournis en entrée et de la position initial du moteur, de calculer l'angle à appliquer au moteur en sorti
      ***/
     public void calcul(int zenith, int azimuth ) {
-        //System.out.println("zenith : "+zenithIni+" ; azimuth : "+azimuthIni);
+        System.out.println("class Rotation:  zenith : "+zenithIni+" ; azimuth : "+azimuthIni);
+
         int azimuthAppliquer=azimuth-azimuthIni;
         int zenithAppliquer=zenith-zenithIni;
 
@@ -63,8 +68,14 @@ public class Rotation {
         return moteurBas;
     }
 
-    public double[][] getData(){
+    public double[][] getData() {
         return data;
+    }
+
+    public static void main(String[] args) {
+
+        Rotation r = new Rotation(40,50, true);
+
     }
 
 }
