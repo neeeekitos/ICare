@@ -11,6 +11,7 @@ public class Unthread extends Thread {
     public Unthread(Rotation r, Soleil soleil){
         rotateMoteurs=r;
         this.soleil = soleil;
+
     }
 
     public void run(){
@@ -28,6 +29,7 @@ public class Unthread extends Thread {
                 i++;
                 try {
                     this.sleep(time);
+
                 } catch (InterruptedException ex) {
                 }
             } else {
@@ -48,3 +50,4 @@ public class Unthread extends Thread {
 
     public void setTime(int time){ this.time=time; }
 }
+

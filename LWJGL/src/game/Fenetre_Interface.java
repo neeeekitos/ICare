@@ -36,6 +36,7 @@ public class Fenetre_Interface implements ActionListener {
 
     public Fenetre_Interface(GameEngine gameEngine) {
         this.gameEngine = gameEngine;
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException e) {
@@ -51,6 +52,7 @@ public class Fenetre_Interface implements ActionListener {
         frame.setSize(700, 400);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
         //pour centrer sur l'ecran
         frame.setLocationRelativeTo(null);
         frame.getContentPane().add(this.panelPrincipal);
@@ -106,6 +108,7 @@ public class Fenetre_Interface implements ActionListener {
         System.exit(0);
     }
 
+
     public boolean getManuel() {
         return manuel;
     }
@@ -144,5 +147,6 @@ public class Fenetre_Interface implements ActionListener {
 
     public static void main(String[] args) {
         Fenetre_Interface fen = new Fenetre_Interface(null);
+
     }
 }
