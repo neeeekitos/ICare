@@ -1,10 +1,19 @@
 package game;
 
+import engine.GameEngine;
+
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.security.cert.Extension;
 
+import static java.awt.SystemColor.desktop;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class Fenetre_Interface implements ActionListener {
@@ -17,15 +26,16 @@ public class Fenetre_Interface implements ActionListener {
     private JButton manuelButton;
     private JButton fichierExcelButton;
     private JButton exitButton;
-    private JTextField textField1;
+    private JSpinner spinner;
     private boolean manuel;
     private boolean affichage;
     private ReadCSV lectureExcel;
+    private GameEngine gameEngine;
 
     private double [][] tableauExcel;
 
-    public Fenetre_Interface() {
-
+    public Fenetre_Interface(GameEngine gameEngine) {
+        this.gameEngine = gameEngine;
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException e) {
@@ -65,17 +75,21 @@ public class Fenetre_Interface implements ActionListener {
         });*/
     }
 
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e){
         if (e.getSource() == manuelButton) {
             manuel = true;
             affichage = true;
+            gameEngine.setAffichage(affichage);
             frame.dispose();
         }
         if (e.getSource() == fichierExcelButton) {
             manuel = false;
+//            lectureExcel = new ReadCSV() ;
+//            System.out.println("new read csv");
+//            tableauExcel = lectureExcel.getData();
             affichage = true;
-            lectureExcel = new ReadCSV() ;
-            tableauExcel = lectureExcel.getData();
+            gameEngine.setAffichage(affichage);
+            Unthread.setIntervalUpdate((Integer) spinner.getValue()); // non null
             frame.dispose();
 //            lectureExcel.lecture();
         }
@@ -98,10 +112,6 @@ public class Fenetre_Interface implements ActionListener {
 
     public void setManuel(boolean manuel) {
         this.manuel = manuel;
-    }
-
-    public boolean getAffichage() {
-        return affichage;
     }
 
     public void setAffichage(boolean affichage) {
@@ -133,6 +143,6 @@ public class Fenetre_Interface implements ActionListener {
     }
 
     public static void main(String[] args) {
-        Fenetre_Interface fen = new Fenetre_Interface();
+        Fenetre_Interface fen = new Fenetre_Interface(null);
     }
 }

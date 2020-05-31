@@ -54,8 +54,12 @@ public class Soleil extends GameItem {
 
     public void angleSoleil( float Ze, float Az ){
 
-        if (Ze>=360 || Ze<=-360){ zenithSoleil=0;}  // Pas obligatoire
-        if (Az>=360|| Az<=-360){ azimutSoleil =0;}  // Pas obligatoire non plus
+        if (Ze >= 360) Ze -= 360;
+        if (Ze <= 0) Ze += 360;
+
+        if (Az >= 360) Az -= 360;
+        if (Az <= 0) Az += 360;
+
         float Rayon = 3.5f;
         float radZe = (float) Math.toRadians(Ze);
         float radAz = (float) Math.toRadians(Az);
@@ -65,21 +69,17 @@ public class Soleil extends GameItem {
         this.getPosition().x = nouvX;
         this.getPosition().y = nouvY;
         this.getPosition().z = nouvZ;
-        AffichageZenith( Ze);
+        setZenithSoleil(Ze);
+        setAzimutSoleil(Az);
     }
 
-    public void AffichageZenith ( float Ze){
-        if (zenithSoleil >= -360 && zenithSoleil < -270) {
-            zenithSoleilpourAffichage = 360 + zenithSoleil;
-        } else if (zenithSoleil >= -270 && zenithSoleil < -90) {
-            zenithSoleilpourAffichage = -180 - zenithSoleil;
-        } else if (zenithSoleil >= -90 && zenithSoleil < 90) {
-            zenithSoleilpourAffichage =  zenithSoleil ;
-        }else if (zenithSoleil >= 90 && zenithSoleil < 270) {
-            zenithSoleilpourAffichage = 180-zenithSoleil;
-        }else if (zenithSoleil >= 270 && zenithSoleil < 360) {
-            zenithSoleilpourAffichage = zenithSoleil - 360  ;
-        }
+    public void setZenithSoleil ( float Ze){
+        zenithSoleil = Ze;
+        System.out.println("classe Soleil : zenith soleil : "+ Ze);
+    }
+
+    public void setAzimutSoleil(float Az) {
+        azimutSoleil = Az;
     }
 
     public void mise_a_jour(){
@@ -128,16 +128,8 @@ public class Soleil extends GameItem {
         return zenithSoleil;
     }
 
-    public void setZenithSoleil(float zenithSoleil) {
-        this.zenithSoleil = zenithSoleil;
-    }
-
     public float getAzimutSoleil() {
         return azimutSoleil;
-    }
-
-    public void setAzimutSoleil(float azimutSoleil) {
-        this.azimutSoleil = azimutSoleil;
     }
 
     public float getZenithSoleilpourAffichage() {

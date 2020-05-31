@@ -18,12 +18,14 @@ public class GameEngine implements Runnable {
 
     private final MouseInput mouseInput;
 
+    private boolean affichage = false;
+
     public GameEngine(String windowTitle, boolean vSync, IGameLogic gameLogic) throws Exception {
         this(windowTitle, 0, 0, vSync, gameLogic);
     }
 
     public GameEngine(String windowTitle, int width, int height, boolean vSync, IGameLogic gameLogic) throws Exception {
-        Fenetre_Interface fen = new Fenetre_Interface();
+        Fenetre_Interface fen = new Fenetre_Interface(this);
         window = new Window(windowTitle, width, height, vSync,fen);
         mouseInput = new MouseInput();
         this.gameLogic = gameLogic;
@@ -33,11 +35,10 @@ public class GameEngine implements Runnable {
     @Override
     public void run() {
         try {
-            boolean affichage = false;
-            while ( affichage == false ){
-                affichage = window.getFen().getAffichage();
+            while (!affichage){
                 System.out.println();
             }
+            System.out.println("c;est parti!!!!!!!!!!");
             init();
             gameLoop();
         } catch (Exception excp) {
@@ -107,5 +108,9 @@ public class GameEngine implements Runnable {
     protected void render() {
         gameLogic.render(window);
         window.update();
+    }
+
+    public void setAffichage(boolean affichage) {
+        this.affichage = affichage;
     }
 }

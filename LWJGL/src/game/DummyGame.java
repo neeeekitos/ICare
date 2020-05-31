@@ -3,21 +3,17 @@ package game;
 import engine.*;
 import engine.graph.*;
 import engine.graph.Renderer;
-import engine.graph.lights.PointLight;
 import engine.items.SkyBox;
 import engine.items.Soleil;
-import javafx.geometry.Pos;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import static org.lwjgl.glfw.GLFW.*;
-import engine.graph.lights.DirectionalLight;
+
 import engine.items.GameItem;
 import engine.items.Terrain;
 
-import javax.swing.*;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -30,6 +26,8 @@ public class DummyGame implements IGameLogic {
     private final Vector3f cameraInc;
     private final Renderer renderer;
     private final Camera camera;
+
+    private Unthread thread;
 
     private Scene scene;
 
@@ -44,7 +42,7 @@ public class DummyGame implements IGameLogic {
     private Terrain terrain;
 
 
-    private Soleil SoleilGameItem;
+    private Soleil soleilGameItem;
 
     private int touchCounter = 0;
     private GameItem basMdfItem;
@@ -80,9 +78,11 @@ public class DummyGame implements IGameLogic {
         
         renderer.init(window);
 
+        isManualMode = window.getFen().getManuel();
+
         scene = new Scene();
 
-        isManualMode = window.getFen().getManuel();
+        rotateMoteurs = new Rotation(0,0, isManualMode);
 
         // Setup  GameItems
         Texture textureMDF = chercheTexture("textures/marron_clair.png");
@@ -227,12 +227,12 @@ public class DummyGame implements IGameLogic {
         Mesh SoleilMesh = OBJLoader.loadMesh("/models/soleil.obj");
         Material SoleilMaterial = new Material( chercheTexture("textures/soleil.png"),reflectance );
         SoleilMesh.setMaterial(SoleilMaterial);
-        SoleilGameItem = new Soleil(SoleilMesh,scene);
-        SoleilGameItem.setPosition(0, 1.5f, 0);
-        SoleilGameItem.setRotation(90,0,0);
-        SoleilGameItem.setScale(0.5f);
-        zenithSoleil = SoleilGameItem.getZenithSoleil();
-        azimutSoleil = SoleilGameItem.getAzimutSoleil();
+        soleilGameItem = new Soleil(SoleilMesh,scene);
+        soleilGameItem.setPosition(0, 1.5f, 0);
+        soleilGameItem.setRotation(90,0,0);
+        soleilGameItem.setScale(0.5f);
+        zenithSoleil = soleilGameItem.getZenithSoleil();
+        azimutSoleil = soleilGameItem.getAzimutSoleil();
         zenithSoleilpourAffichage = zenithSoleil;
 
         Mesh quadMesh = OBJLoader.loadMesh("/models/Table.obj");
@@ -241,27 +241,29 @@ public class DummyGame implements IGameLogic {
         GameItem quadGameItem = new GameItem(quadMesh);
         quadGameItem.setPosition(0, -1, 0);
         quadGameItem.getRotation().z = 90;
-        quadGameItem.setScale(2.5f);
+        quadGameItem.setScale(0.5f);
 
 
-        scene.setGameItems(new GameItem[]{ SoleilGameItem,basPignonItem,basMdfItem,basAcierItem, axePlastiqueItem,
+        scene.setGameItems(new GameItem[]{soleilGameItem,basPignonItem,basMdfItem,basAcierItem, axePlastiqueItem,
                 axeMdfItem, basBouleItem, axeAcierItem, hautMdfItem, hautAcierItem, hautPanneauItem, hautPlastiqueItem, hautPmmaItem,quadGameItem});
 
         // Setup Lights
-        SoleilGameItem.setupLights();
+        soleilGameItem.setupLights();
 
         SkyBox ciel = new SkyBox("/models/skybox.obj",chercheTexture("textures/skyboxFinal_3.png"));
         scene.setSkyBox(ciel);
         scene.getSceneLight().setSkyBoxLight(new Vector3f(1,1,1));
         scene.getSkyBox().setScale(9f);
+        scene.getSkyBox().setPosition(0, -1, 0);
 
-        camera.getPosition().z = 3;
-        camera.getPosition().y = 1.5f;
+        camera.getPosition().z = 0.5f;
+        camera.getPosition().y = -0.7f;
         camera.getRotation().x = 25;
 
         hud = new Hud("Azimut Angle:");
 
-        rotateMoteurs = new Rotation(0,0, isManualMode,SoleilGameItem);
+        thread = new Unthread(rotateMoteurs, soleilGameItem);
+        thread.start();
     }
 
     @Override
@@ -269,6 +271,7 @@ public class DummyGame implements IGameLogic {
         if (window.isKeyPressed(GLFW_KEY_M)) {
             if (touchCounter < 1) {
                 isManualMode = !isManualMode; // switcher le mode manuel
+                thread.setIsManualMode(isManualMode);
                 System.out.println("Manual mode is " + ((isManualMode) ? "ON" : "OFF"));
             }
             touchCounter++;
@@ -302,25 +305,25 @@ public class DummyGame implements IGameLogic {
         if (window.isKeyPressed(GLFW_KEY_UP) && isManualMode) {
             // limiter zenithSoleil : toujours < 180
             zenithSoleil++;
-            SoleilGameItem.setZenithSoleil(zenithSoleil);
-            SoleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
+            soleilGameItem.setZenithSoleil(zenithSoleil);
+            soleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
             rotateMoteurs.getMoteurHaut().setAngle(90-zenithSoleil);
         } else if (window.isKeyPressed(GLFW_KEY_DOWN) && isManualMode) {
             // limiter zenithSoleil : toujours > 0
             zenithSoleil--;
-            SoleilGameItem.setZenithSoleil(zenithSoleil);
-            SoleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
+            soleilGameItem.setZenithSoleil(zenithSoleil);
+            soleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
             rotateMoteurs.getMoteurHaut().setAngle(90-zenithSoleil);
         }
         if (window.isKeyPressed(GLFW_KEY_LEFT) && isManualMode) {
             azimutSoleil -= 1;
-            SoleilGameItem.setAzimutSoleil(azimutSoleil);
-            SoleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
+            soleilGameItem.setAzimutSoleil(azimutSoleil);
+            soleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
             rotateMoteurs.getMoteurBas().setAngle(azimutSoleil);
         } else if (window.isKeyPressed(GLFW_KEY_RIGHT) && isManualMode) {
             azimutSoleil += 1;
-            SoleilGameItem.setAzimutSoleil(azimutSoleil);
-            SoleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
+            soleilGameItem.setAzimutSoleil(azimutSoleil);
+            soleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
             rotateMoteurs.getMoteurBas().setAngle(azimutSoleil);
         }
         if (window.isKeyPressed(GLFW_KEY_O)) {
@@ -354,11 +357,15 @@ public class DummyGame implements IGameLogic {
         if (camera.getPosition().y <= height) {
             camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
         }
+        System.out.println(camera.getPosition().z + " position y " + camera.getPosition().y + "rotation x" + camera.getRotation().x);
 
-        SoleilGameItem.mise_a_jour();   //Luminosité en fonction de la position du soleil
-        SoleilGameItem.coucherDeSoleil();
-        hud.setStatusText("Azimut = " + SoleilGameItem.getAzimutSoleil()+" / zenith (angle) = "+ SoleilGameItem.getZenithSoleil()+" zenith (definition) = " + SoleilGameItem.getZenithSoleilpourAffichage());
+        soleilGameItem.mise_a_jour();   //Luminosité en fonction de la position du soleil
+        soleilGameItem.coucherDeSoleil();
+        hud.setStatusText("Manual mode is " + ((isManualMode) ? "ON" : "OFF")+ "       |       " +
+                "Azimut = " + soleilGameItem.getAzimutSoleil()+" / zenith (angle) = "+ soleilGameItem.getZenithSoleil()+" zenith (definition) = " + soleilGameItem.getZenithSoleilpourAffichage());
 
+        zenithSoleil = soleilGameItem.getZenithSoleil();
+        azimutSoleil = soleilGameItem.getAzimutSoleil();
         updatePosition();
 
         this.scene.getSkyBox().setPosition(-camera.getPosition().x,-camera.getPosition().y+7.4f,-camera.getPosition().z);
@@ -409,7 +416,10 @@ public class DummyGame implements IGameLogic {
     public void updatePosition() {
 
         rotateMoteurs.getMoteurBas().tournerVerticalement(new GameItem[] {hautPlastiqueItem, hautPmmaItem, hautPanneauItem, hautAcierItem, hautMdfItem});
-        rotateMoteurs.getMoteurHaut().tournerHorizontalement(new GameItem[] {hautPlastiqueItem, hautPmmaItem, hautPanneauItem, hautAcierItem, hautMdfItem});
+
+        if (zenithSoleil>0 && zenithSoleil <180) { // pour eviter les collisions du panneau avec le corps
+            rotateMoteurs.getMoteurHaut().tournerHorizontalement(new GameItem[]{hautPlastiqueItem, hautPmmaItem, hautPanneauItem, hautAcierItem, hautMdfItem});
+        }
 
         axeAcierItem.getRotation().z = azimutSoleil;
         axeMdfItem.getRotation().z = azimutSoleil;

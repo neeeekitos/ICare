@@ -12,7 +12,7 @@
       <size top="30" left="30" bottom="30" right="30"/>
     </border>
     <children>
-      <grid id="54662" binding="panel2" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="2">
+      <grid id="54662" binding="panel2" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="2">
         <margin top="0" left="30" bottom="0" right="0"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -24,8 +24,8 @@
         <children>
           <component id="b1c36" class="javax.swing.JButton" binding="manuelButton" default-binding="true">
             <constraints>
-              <grid row="0" column="0" row-span="3" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="126" height="30"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="230" height="30"/>
               </grid>
             </constraints>
             <properties>
@@ -35,26 +35,33 @@
               <text value="Manuel"/>
             </properties>
           </component>
-          <component id="d3b2a" class="javax.swing.JTextField" binding="textField1" default-binding="true">
-            <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <background color="-16777216"/>
-              <text value=""/>
-            </properties>
-          </component>
           <component id="c864e" class="javax.swing.JButton" binding="fichierExcelButton" default-binding="true">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="126" height="30"/>
+              </grid>
             </constraints>
             <properties>
               <background color="-11356502"/>
               <foreground color="-1"/>
               <text value="Fichier Excel"/>
             </properties>
+          </component>
+          <component id="c40d0" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="80" height="16"/>
+              </grid>
+            </constraints>
+            <properties>
+              <text value="Intervalle de la mise à jour de la position du soleil"/>
+            </properties>
+          </component>
+          <component id="33b8" class="javax.swing.JSpinner" binding="spinner">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
           </component>
         </children>
       </grid>
