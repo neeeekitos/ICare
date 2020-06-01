@@ -1,7 +1,5 @@
 package engine;
 
-import engine.items.GameItem;
-import game.DummyGame;
 import game.Fenetre_Interface;
 
 public class GameEngine implements Runnable {

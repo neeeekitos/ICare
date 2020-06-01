@@ -19,7 +19,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 
 
-public class DummyGame implements IGameLogic {
+public class TrackeurGame implements IGameLogic {
 
     private static final float MOUSE_SENSITIVITY = 0.2f;
 
@@ -67,7 +67,7 @@ public class DummyGame implements IGameLogic {
 
     private float zenithSoleilpourAffichage; //Correspond à un l'angle entre le plan x0z et y est compris entre -90° et 90°
 
-    public DummyGame() {
+    public TrackeurGame() {
         renderer = new Renderer();
         camera = new Camera();
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
@@ -329,7 +329,7 @@ public class DummyGame implements IGameLogic {
         if (window.isKeyPressed(GLFW_KEY_O)) {
             try {
                 boolean vSync = true;
-                IGameLogic gameLogic = new DummyGame();
+                IGameLogic gameLogic = new TrackeurGame();
                 GameEngine gameEng = new GameEngine("GAME", vSync, gameLogic);
                 window.terminer();
                 gameEng.run();
