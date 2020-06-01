@@ -48,12 +48,12 @@ public class Fenetre_Interface implements ActionListener {
             e.printStackTrace();
         }
         frame = new JFrame();
-        frame.setSize(700, 400);
-        frame.setVisible(true);
+        frame.setSize(800, 450);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         //pour centrer sur l'ecran
         frame.setLocationRelativeTo(null);
         frame.getContentPane().add(this.panelPrincipal);
+        frame.setVisible(true);
         action();
 
     }
