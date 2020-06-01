@@ -62,17 +62,6 @@ public class Fenetre_Interface implements ActionListener {
         manuelButton.addActionListener(this);
         exitButton.addActionListener(this);
         fichierExcelButton.addActionListener(this);
-        /*jLabelEntrer.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                //new JOptionPane().showMessageDialog(null, "Vous avez entré l'azimut : " + jFieldAzimut.getText() + " et le zénith : " + jFieldZenith.getText() + " .");
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                //jLabelEntrer.setOpaque(true);
-            }
-        });*/
     }
 
     public void actionPerformed(ActionEvent e){
@@ -84,14 +73,10 @@ public class Fenetre_Interface implements ActionListener {
         }
         if (e.getSource() == fichierExcelButton) {
             manuel = false;
-//            lectureExcel = new ReadCSV() ;
-//            System.out.println("new read csv");
-//            tableauExcel = lectureExcel.getData();
             affichage = true;
             gameEngine.setAffichage(affichage);
             Unthread.setIntervalUpdate((Integer) spinner.getValue()); // non null
             frame.dispose();
-//            lectureExcel.lecture();
         }
         if (e.getSource() == exitButton) {
             System.exit(0);

@@ -65,8 +65,6 @@ public class TrackeurGame implements IGameLogic {
 
     private float zenithSoleil;             //Correspond à un l'angle entre l'axe x et y est compris entre 0 et 360°
 
-    private float zenithSoleilpourAffichage; //Correspond à un l'angle entre le plan x0z et y est compris entre -90° et 90°
-
     public TrackeurGame() {
         renderer = new Renderer();
         camera = new Camera();
@@ -233,7 +231,6 @@ public class TrackeurGame implements IGameLogic {
         soleilGameItem.setScale(0.5f);
         zenithSoleil = soleilGameItem.getZenithSoleil();
         azimutSoleil = soleilGameItem.getAzimutSoleil();
-        zenithSoleilpourAffichage = zenithSoleil;
 
         Mesh quadMesh = OBJLoader.loadMesh("/models/Table.obj");
         Material quadMaterial = new Material( chercheTexture("textures/bois.png") );
@@ -303,13 +300,11 @@ public class TrackeurGame implements IGameLogic {
             cameraInc.y = 1;
         }
         if (window.isKeyPressed(GLFW_KEY_UP) && isManualMode) {
-            // limiter zenithSoleil : toujours < 180
             zenithSoleil++;
             soleilGameItem.setZenithSoleil(zenithSoleil);
             soleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
             rotateMoteurs.getMoteurHaut().setAngle(90-zenithSoleil);
         } else if (window.isKeyPressed(GLFW_KEY_DOWN) && isManualMode) {
-            // limiter zenithSoleil : toujours > 0
             zenithSoleil--;
             soleilGameItem.setZenithSoleil(zenithSoleil);
             soleilGameItem.angleSoleil(zenithSoleil,azimutSoleil);
@@ -362,7 +357,7 @@ public class TrackeurGame implements IGameLogic {
         soleilGameItem.mise_a_jour();   //Luminosité en fonction de la position du soleil
         soleilGameItem.coucherDeSoleil();
         hud.setStatusText("Manual mode is " + ((isManualMode) ? "ON" : "OFF")+ "       |       " +
-                "Azimut = " + soleilGameItem.getAzimutSoleil()+" / zenith (angle) = "+ soleilGameItem.getZenithSoleil()+" zenith (definition) = " + soleilGameItem.getZenithSoleilpourAffichage());
+                "Azimut = " + soleilGameItem.getAzimutSoleil()+" / zenith (angle) = "+ soleilGameItem.getZenithSoleil());
 
         zenithSoleil = soleilGameItem.getZenithSoleil();
         azimutSoleil = soleilGameItem.getAzimutSoleil();
@@ -421,9 +416,13 @@ public class TrackeurGame implements IGameLogic {
             rotateMoteurs.getMoteurHaut().tournerHorizontalement(new GameItem[]{hautPlastiqueItem, hautPmmaItem, hautPanneauItem, hautAcierItem, hautMdfItem});
         }
 
+        /* il suffit de reorienter les axe des modeles 3D ci-dessous pour
+        les utiliser avec une methode tournerVerticalement comme on le fait avec les
+        partie hautes. Pour une raison d'economisation du temps, nous avons décidé de les laisser
+        ici vu que l'idée est déjà implémentée sur les partie hautes.
+         */
         axeAcierItem.getRotation().z = azimutSoleil;
         axeMdfItem.getRotation().z = azimutSoleil;
         axePlastiqueItem.getRotation().z = azimutSoleil;
     }
-
 }

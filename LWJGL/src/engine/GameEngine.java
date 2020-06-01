@@ -36,7 +36,7 @@ public class GameEngine implements Runnable {
             while (!affichage){
                 System.out.println();
             }
-            System.out.println("c;est parti!!!!!!!!!!");
+            System.out.println("c'est parti! Le jeu commence!");
             init();
             gameLoop();
         } catch (Exception excp) {

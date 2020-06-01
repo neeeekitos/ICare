@@ -20,7 +20,7 @@ public class ReadCSV {
      ***/
     public ReadCSV(){
 
-        filePath = openExcel();
+        filePath = openCSV();
         file = new File(filePath);
         System.out.println("The selected file is: " + filePath);
         System.out.println("ouverture d'explorateur des fichiers");
@@ -61,7 +61,7 @@ public class ReadCSV {
         return data;
     }
 
-    public String openExcel() {
+    public String openCSV() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Le fichier csv", "csv"));
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);

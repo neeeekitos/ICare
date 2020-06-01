@@ -1,9 +1,7 @@
 package game;
 
+import engine.items.MoteurSeul;
 import engine.items.Soleil;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Rotation {
     private int azimuthIni;
@@ -15,7 +13,6 @@ public class Rotation {
     private boolean manuel;
     MoteurSeul moteurHaut;
     MoteurSeul moteurBas;
-    Soleil soleil;
 
     /**
     * constructeur de la classe game.Rotation
