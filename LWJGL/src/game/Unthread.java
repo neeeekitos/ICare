@@ -45,6 +45,4 @@ public class Unthread extends Thread {
         if (seconds == 0) seconds = 1; // default value
         time = seconds*1000; //convertir en ms
     }
-
-    public void setTime(int time){ this.time=time; }
 }

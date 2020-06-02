@@ -356,7 +356,7 @@ public class TrackeurGame implements IGameLogic {
 
         soleilGameItem.mise_a_jour();   //Luminosité en fonction de la position du soleil
         soleilGameItem.coucherDeSoleil();
-        hud.setStatusText("Manual mode is " + ((isManualMode) ? "ON" : "OFF")+ "       |       " +
+        hud.setStatusText("Appuez sur \"O\" pour ouvrir le menu principal    |    Manual mode is " + ((isManualMode) ? "ON" : "OFF")+ "    |    " +
                 "Azimut = " + soleilGameItem.getAzimutSoleil()+" / zenith (angle) = "+ soleilGameItem.getZenithSoleil());
 
         zenithSoleil = soleilGameItem.getZenithSoleil();
