@@ -7,7 +7,7 @@ public class MoteurSeul extends GameItem {
     //Caractéristique propre du moteur
     private String nom;             // Nom du moteur ( haut ou bas )
     private double capacite     ;   // Capacité en tours/min du moteur
-    private float  angle_initial ; // La valeur de l'angle initial
+    private float  angle_initial ;  // La valeur de l'angle initial
     private final double laps = 0.5;// La valeur d'intervalle de temps pendant lequel est calculé le moteur
 
     //Les paramètres variables du moteur

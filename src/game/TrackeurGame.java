@@ -385,8 +385,7 @@ public class TrackeurGame implements IGameLogic {
     }
 
     public Texture chercheTexture ( String NomTexture) throws Exception {
-        URL res = getClass().getClassLoader().getResource(NomTexture);
-        File file = Paths.get(res.toURI()).toFile();
+        File file = new File("resources/" + NomTexture);
         String absolutePath = file.getAbsolutePath();
         Texture texture = new Texture(absolutePath);
         return  texture;
